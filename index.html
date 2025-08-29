@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Technical Analysis (TA) — Candlesticks • Indicators • Trend Lines</title>
+
+  <!-- Binance Plex Font + Icons -->
+  <link href="https://db.onlinewebfonts.com/c/d05c19ccecf7003d248c60ffd6b5e8f7?family=Binance+PLEX" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    :root{
+      --bg:#0f1115; --panel:#1e2329; --text:#e7edf3; --muted:#9aa4af;
+      --accent:#f0b90b; --green:#3acf87; --red:#e04b4a; --blue:#5da6ff;
+      --card:#151a21; --border:#2a3139;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:"Binance PLEX",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+      background:linear-gradient(180deg,#0f1115 0%, #0b0d11 100%); color:var(--text);
+    }
+    header{
+      position:sticky; top:0; z-index:20;
+      background:rgba(30,35,41,.9); backdrop-filter:blur(8px);
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:14px 16px; display:flex; gap:12px; align-items:center; justify-content:space-between}
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{
+      width:36px; height:36px; display:grid; place-items:center; border-radius:9px;
+      background:conic-gradient(from 220deg, var(--accent), #ffd761, var(--accent));
+      color:#111; font-weight:900;
+      box-shadow:0 2px 18px rgba(240,185,11,.3);
+    }
+    h1{font-size:18px; margin:0; letter-spacing:.3px}
+    .select{
+      background:#12161c; color:var(--text); border:1px solid var(--border);
+      padding:8px 12px; border-radius:10px; font-size:14px;
+    }
+    main{max-width:1100px; margin:24px auto; padding:0 16px 60px}
+    .hero{
+      background:radial-gradient(1200px 300px at 10% -20%,rgba(240,185,11,.08),transparent),
+                 linear-gradient(180deg,#12161c, #0f1217);
+      border:1px solid var(--border); border-radius:16px; padding:22px 18px; margin-bottom:18px;
+    }
+    .hero h2{margin:0 0 8px 0; font-size:22px}
+    .meta{display:flex; gap:18px; flex-wrap:wrap; color:var(--muted); font-size:13px}
+    .grid{display:grid; gap:16px; grid-template-columns:repeat(12,1fr)}
+    .card{
+      grid-column:span 12; background:var(--card); border:1px solid var(--border);
+      border-radius:14px; padding:16px 16px 18px 16px;
+    }
+    @media(min-width:860px){
+      .card.half{grid-column:span 6}
+      .card.third{grid-column:span 4}
+    }
+    .card h3{margin:0 0 8px 0; font-size:18px}
+    .card p{margin:8px 0; line-height:1.6; color:#dfe6ee}
+    .list{margin:8px 0 0 0; padding-left:18px}
+    .tag{display:inline-block; background:#12161c; border:1px solid var(--border);
+         padding:4px 8px; border-radius:999px; font-size:12px; color:var(--muted); margin-right:6px}
+    .callout{
+      background:linear-gradient(180deg, #14221a, #10161a);
+      border:1px solid #203029; border-radius:12px; padding:14px; color:#d7ffe9
+    }
+    .warn{
+      background:linear-gradient(180deg, #2a1515, #1a0f0f);
+      border:1px solid #3a2020; border-radius:12px; padding:14px; color:#ffd8d8
+    }
+    .kbd{padding:2px 6px; border:1px solid var(--border); border-radius:6px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace; background:#11151b}
+    .foot{margin-top:14px; font-size:12.5px; color:var(--muted)}
+    .hr{height:1px; background:var(--border); margin:12px 0}
+    /* toast */
+    #toast{position:fixed; right:18px; bottom:18px; background:#12161c; color:var(--text);
+      border:1px solid var(--border); border-radius:10px; padding:10px 12px; opacity:0; transform:translateY(12px);
+      transition:.25s ease; font-size:14px; z-index:50}
+    #toast.show{opacity:1; transform:translateY(0)}
+    /* code bullets look */
+    .icon{color:var(--accent); margin-right:8px}
+    a{color:var(--blue); text-decoration:none}
+    .pill{display:inline-flex; align-items:center; gap:6px; background:#12161c; border:1px dashed var(--border);
+      padding:6px 10px; border-radius:999px; color:var(--muted); font-size:12px}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo"><i class="fa-solid fa-candlestick-chart"></i></div>
+      <h1 id="headTitle">Technical Analysis — Candlesticks • Indicators • Trend Lines</h1>
+    </div>
+    <div>
+      <label class="pill"><i class="fa-solid fa-globe icon"></i><span id="langLabel">Language</span></label>
+      <select id="lang" class="select" aria-label="Language">
+        <option value="en" selected>English</option>
+        <option value="si">සිංහල (Sinhala)</option>
+        <option value="ta">தமிழ் (Tamil)</option>
+        <option value="ar">العربية (Arabic) — coming soon</option>
+        <option value="th">ไทย (Thai) — coming soon</option>
+        <option value="fr">Français — coming soon</option>
+        <option value="es">Español — coming soon</option>
+        <option value="de">Deutsch — coming soon</option>
+        <option value="hi">हिन्दी — coming soon</option>
+        <option value="zh">中文 — coming soon</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h2 id="heroTitle">Price Analysis using Candlesticks, Indicators, and Trend Lines</h2>
+    <div class="meta" id="heroMeta">
+      <span><i class="fa-regular fa-clock icon"></i>Reading time ~18–22 min</span>
+      <span><i class="fa-solid fa-signal icon"></i>Focus: RSI, MACD, Bollinger Bands</span>
+      <span><i class="fa-solid fa-shield-halved icon"></i>Risk-first: stops & invalidation</span>
+    </div>
+    <div class="hr"></div>
+    <p id="heroIntro"></p>
+    <div class="foot" id="disclaimer"></div>
+  </section>
+
+  <div class="grid" id="content">
+    <!-- JS will render all section cards here -->
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   i18n content: English (en), Sinhala (si), Tamil (ta)
+   Only these three switch the full text. Others show as options.
+   ============================================================ */
+
+const translations = {
+  en: {
+    headTitle: "Technical Analysis — Candlesticks • Indicators • Trend Lines",
+    langLabel: "Language",
+    heroTitle: "Price Analysis using Candlesticks, Indicators, and Trend Lines",
+    heroIntro: `
+      Technical Analysis (TA) studies market behavior through price and volume to make
+      probabilistic decisions. In crypto—fast, 24/7, and sentiment-driven—TA helps you
+      turn raw candles into structured plans. This guide walks you through <b>candlesticks</b>
+      and key <b>patterns</b>, core <b>indicators</b> (RSI, MACD, Bollinger Bands), how to draw
+      <b>trend lines</b>, and how to map <b>support/resistance</b> zones. You’ll also learn confluence,
+      multi-timeframe flows, and risk control so your strategy is repeatable—not lucky.
+    `,
+    disclaimer: `
+      <span class="tag">Not financial advice</span>
+      Markets are risky and past performance doesn’t guarantee future results.
+      Always use a stop, define invalidation, and size positions responsibly.
+    `,
+    sections: [
+      {
+        title: "1) Candlestick Basics",
+        body: `
+          <p>Candles compress trading into four numbers: <b>open</b>, <b>high</b>, <b>low</b>, <b>close</b> (OHLC).
+          The body shows open→close, and wicks show extremes. A green candle closes higher than it opens; a red candle closes lower.
+          On higher timeframes (HTF) like 1D and 1W, each candle aggregates a lot of trading—so signals usually carry more weight.</p>
+
+          <ul class="list">
+            <li><b>Context first:</b> the same candle means different things in a trend vs. in a range.</li>
+            <li><b>Three Cs:</b> <i>Context, Confirmation, Confluence.</i> Never trade a single candle in isolation.</li>
+            <li><b>Close matters:</b> HTF close often “decides” whether a level truly broke or just wicked through.</li>
+          </ul>
+        `
+      },
+      {
+        title: "2) High-Value Candlestick Patterns",
+        body: `
+          <p>Patterns are clues, not promises. The best ones appear where they <i>should</i>: at fresh levels, after clear trends,
+          with volume support, and alongside indicator confluence.</p>
+
+          <p><b>Engulfing (Bullish/Bearish):</b> A candle closes beyond the prior candle’s body, “engulfing” it. After a pullback into support, a bullish engulfing suggests buyers seized control. In a down-trend at resistance, a bearish engulfing can signal continuation lower.</p>
+
+          <p><b>Doji / Spinning Top:</b> Small body, long wicks → indecision. Powerful when it rejects a key level or appears in a cluster near support/resistance prior to a break.</p>
+
+          <p><b>Hammer / Shooting Star:</b> Long lower wick (hammer) after a decline hints at demand stepping in; long upper wick (shooting star) after a rally hints at supply. Reliability grows on HTF and when the wick taps a known level or trend line.</p>
+
+          <p><b>Morning/Evening Star:</b> Three-candle reversals showing a transfer of control from sellers→buyers (morning) or buyers→sellers (evening). Look for follow-through and volume confirmation.</p>
+
+          <p><b>Inside Bar:</b> Consolidation inside the previous candle’s range. Breaks of the mother bar often give clean momentum trades—best when aligned with the dominant trend.</p>
+
+          <div class="callout">
+            <i class="fa-solid fa-lightbulb icon"></i>
+            Tip: Patterns at <b>fresh</b> levels beat patterns at “tired” levels that price has chopped through many times.
+          </div>
+        `
+      },
+      {
+        title: "3) Core Indicators: RSI, MACD, Bollinger Bands",
+        body: `
+          <p><b>RSI (Relative Strength Index)</b> measures the speed of gains vs. losses. Default setting is <b>14</b>. Classic zones:
+          70–80 = overbought; 20–30 = oversold. In strong uptrends, RSI often <i>stays</i> above 40–50; in downtrends it often fails below 50.
+          Watch for <b>divergence</b> (price higher high but RSI lower high = bearish; price lower low but RSI higher low = bullish).</p>
+
+          <ul class="list">
+            <li><b>Momentum regime:</b> In bull phases, RSI pullbacks to 40–50 often mark continuation entries.</li>
+            <li><b>Hidden divergence:</b> In trends, hidden divergence can signal trend continuation after pullbacks.</li>
+            <li><b>Multi-TF:</b> HTF RSI crossing 50 adds weight to LTF setups.</li>
+          </ul>
+
+          <p><b>MACD</b> uses EMAs (12/26) and a signal line (9). Crosses above the signal can mark bullish momentum;
+          below marks bearish. The histogram visualizes the difference: rising histo = strengthening momentum; falling = weakening.
+          Best used to confirm trend changes or add confluence to breaks and retests.</p>
+
+          <p><b>Bollinger Bands (BB)</b> = middle band (20-SMA) plus/minus 2 standard deviations by default. Key behaviors:
+          <b>Squeeze</b> (bands contract) → volatility likely ahead; <b>Expansion</b> (bands widen) → trend in motion.
+          In trends, price can “walk the band”; counter-trend fades work better in ranges and at HTF levels.</p>
+
+          <div class="callout">
+            <i class="fa-solid fa-sliders icon"></i>
+            Typical crypto settings: RSI <b>14</b>, MACD <b>12-26-9</b>, BB <b>20, 2σ</b>. Adjust only with a reason and keep them consistent to avoid curve-fitting.
+          </div>
+        `
+      },
+      {
+        title: "4) Drawing Clean Trend Lines & Channels",
+        body: `
+          <p>Trend lines connect <b>at least two</b> swing points (ideally three touches to “confirm”). Draw <i>wicks to wicks</i> for extremes,
+          or <i>closes to closes</i> if wicks are noisy—be consistent. Parallel a second line to form a <b>channel</b> for targets and mid-line reactions.</p>
+
+          <ul class="list">
+            <li><b>Respect structure:</b> Don’t force lines to fit your bias. If it needs 10 exceptions, it’s wrong.</li>
+            <li><b>Breaks & retests:</b> A clean break with a <i>retest and hold</i> often provides high-quality entries.</li>
+            <li><b>Confluence:</b> Trend line + HTF level + RSI regime or MACD flip beats any single signal.</li>
+          </ul>
+        `
+      },
+      {
+        title: "5) Support & Resistance (S/R) as Zones",
+        body: `
+          <p>Think in <b>zones</b>, not single lines. Mark areas where price repeatedly flipped from supply to demand (or vice-versa).
+          HTF zones (1D/1W) matter most. Inside ranges, the midline (50% of the range) often acts as a magnet.</p>
+
+          <ul class="list">
+            <li><b>Freshness:</b> Levels untested in a long time are more potent than levels hit 5 times this week.</li>
+            <li><b>Role flip:</b> Broken resistance can turn to support on retest; broken support can become resistance.</li>
+            <li><b>Wick vs. close:</b> HTF closes above/below levels carry authority; stray wicks can be traps.</li>
+          </ul>
+        `
+      },
+      {
+        title: "6) Multi-Timeframe Flow & Confluence",
+        body: `
+          <p>Top-down works: set bias on HTF (1D/1W), find structure on 4H/1H, execute on 15m/5m.
+          If HTF is bullish (higher-highs/higher-lows), favor long setups on LTF; if bearish, favor shorts.
+          Add indicators as <b>confirmation</b>—not as permission.</p>
+
+          <div class="callout">
+            <i class="fa-solid fa-layer-group icon"></i>
+            Example flow: 1) Weekly breaks and closes above resistance → bias up.
+            2) Daily pullback to prior resistance (now support) with hammer + RSI 45–55 hold.
+            3) 1H shows bullish engulfing + MACD cross → enter; stop below the zone.
+          </div>
+        `
+      },
+      {
+        title: "7) Risk Management & Invalidation",
+        body: `
+          <p>Good analysis fails without risk control. Define <b>invalidation</b> (the price at which your idea is wrong) <i>before</i> you enter.
+          Place the stop where the setup breaks (not where it “feels” comfortable). Size the position so a loss is acceptable (e.g., 0.5%–2% account risk).</p>
+
+          <ul class="list">
+            <li><b>R:R thinking:</b> Aim for at least 1:1.5 to 1:3. Many small, controlled losses; fewer, larger wins.</li>
+            <li><b>Partial takes:</b> Take profit at first trouble area (FTA); move stop to breakeven only with structure-based reasons.</li>
+            <li><b>Avoid revenge:</b> Your next trade shouldn’t “fix” the previous one. Follow the plan or don’t trade.</li>
+          </ul>
+
+          <div class="warn">
+            <i class="fa-solid fa-triangle-exclamation icon"></i>
+            Leverage amplifies both mistakes and skills. If your invalidation is wide, reduce size; if it’s tight, expect more stopouts.
+          </div>
+        `
+      },
+      {
+        title: "8) Putting It Together — A Simple Checklist",
+        body: `
+          <p>Before clicking buy/sell, run this quick pre-flight:</p>
+          <ul class="list">
+            <li>What’s the <b>HTF bias</b>? Trend or range?</li>
+            <li>Where are <b>fresh S/R zones</b>? Any clean <b>trend line/channel</b> nearby?</li>
+            <li>Do I have <b>confluence</b>: pattern + indicator + level?</li>
+            <li>Where’s my <b>invalidation</b> and <b>target</b>? What’s the <b>R:R</b>?</li>
+            <li>What would make me <b>not</b> take this trade? (No trade is a position.)</li>
+          </ul>
+          <p>Repeatable process beats prediction. Treat this like engineering: same inputs, same steps, measured outputs.</p>
+        `
+      },
+      {
+        title: "9) Common Mistakes (and Fixes)",
+        body: `
+          <ul class="list">
+            <li><b>Chasing breakouts:</b> Wait for a retest or LTF structure to join, unless you accept wider risk.</li>
+            <li><b>Indicator overload:</b> One momentum + one volatility + structure is usually enough.</li>
+            <li><b>Ignoring HTF:</b> LTF signals into HTF resistance are low-probability.</li>
+            <li><b>Moving stops:</b> Only move with a structural reason (e.g., HL formed, channel held).</li>
+            <li><b>Sample bias:</b> Backtest across many markets/periods; don’t cherry-pick winners.</li>
+          </ul>
+          <p class="foot">Save snapshots of good/bad trades with notes. Your own data is the best teacher.</p>
+        `
+      }
+    ],
+    footerNote: `
+      Built as an educational overview for crypto/FX/indices. For best results, combine with journaling,
+      HTF first, and strict risk control.
+    `
+  },
+
+  /* ==================== SINHALA ==================== */
+  si: {
+    headTitle: "තාක්ෂණික විශ්ලේෂණය — Candlesticks • Indicators • Trend Lines",
+    langLabel: "භාෂාව",
+    heroTitle: "Candlesticks, Indicators සහ Trend Lines භාවිතයෙන් මිල විශ්ලේෂණය",
+    heroIntro: `
+      තාක්ෂණික විශ්ලේෂණය (TA) කියන්නේ මිල/ප්‍රමාණ දත්ත ආශ්‍රිතව <b>සම්භාව්‍ය</b> තීරණ ගන්නා ක්‍රමවේදයක්.
+      24/7 ක්‍රිප්ටෝ වෙළඳපොළේ වේගවත් සංවේදී ගමන් අතර TA ඔබට කෑන්ඩල් දත්ත වලින් සැලසුම් සකස් කරගන්න
+      උපකාර කරයි. මෙහිදී <b>කෑන්ඩල් මූලිකතා</b>, ප්‍රමුඛ <b>patterns</b>, <b>RSI / MACD / Bollinger Bands</b>,
+      <b>trend lines</b> ඇඳීම, <b>support/resistance</b> කලාප සැලකීම, multi-timeframe flow සහ
+      <b>risk management</b> පිළිබඳ පැහැදිලි ගමන් මඟක් දෙනවා.
+    `,
+    disclaimer: `
+      <span class="tag">මෙය ආදේශක වාර්තාවක් නොවේ</span>
+      වෙළඳපොළේ අවදානම වැඩි. Stop-loss/invalidations නිර්වචනයාත්මකව භාවිතා කර ප්‍රමාණිත තීරණ ගන්න.
+    `,
+    sections: [
+      {
+        title: "1) Candlestick මූලිකතා",
+        body: `
+          <p>එක් කෑන්ඩලයකින් <b>Open, High, Low, Close</b> (OHLC) අගයන් නිරූපණය කරයි.
+          බොඩිය Open→Close ගමන් පෙන්වයි, wicks උපරිම/අවම. දීර්ඝ කාල පරിധි (1D/1W) මත සලකන සංඛේත
+          ඉතා බලවත්.</p>
+          <ul class="list">
+            <li><b>Context:</b> Trend එකක vs Range එකක තිබෙන කෑන්ඩල් එකක අර්ථය වෙනස්.</li>
+            <li><b>Three C:</b> <i>Context, Confirmation, Confluence.</i> එක කෑන්ඩල් එකක් විශ්වාස නොකරන්න.</li>
+            <li><b>Close:</b> HTF close එක හරහාම බිඳැහීම/ප්‍රතික්ෂේපය තීරණය වෙන්නෙ බොහෝවිට මෙතැන.</li>
+          </ul>
+        `
+      },
+      {
+        title: "2) වටිනා Candlestick Patterns",
+        body: `
+          <p>Patterns කියන්නේ <i>ඉඟි</i>. හොඳම තැන වන්නේ <b>නව</b> මට්ටම්, පැහැදිලි trends, සහ
+          volume/indicator confluence තියෙන අවස්ථා.</p>
+
+          <p><b>Engulfing:</b> මීට පෙර කෑන්ඩලය “දිරාපත්” කරමින් පසුකාලීන කෑන්ඩලය කුඩා බොඩිය මතට/යටට වසාගැනීම.
+          Support එකක දී bullish engulfing → కొనుగోలుකරුවන් පාලනය ගන්නා බවක්.
+          Resistance එකක දී bearish engulfing → පහළට අඛණ්ඩතාව.</p>
+
+          <p><b>Doji / Spinning Top:</b> කුඩා බොඩිය, දිගු wicks → <i>අසර්ථකාමී</i>. මට්ටම්වල රීජෙක්‌ෂන් සමඟින් බලවත්.</p>
+
+          <p><b>Hammer / Shooting Star:</b> පහළ wick දිග (hammer) පසුබෑමකදී demand; ඉහළ wick දිග (shooting star)
+          නැගීම්වලදී supply. HTF+මට්ටම් සමඟ විශ්වාසිත.</p>
+
+          <p><b>Morning/Evening Star:</b> තුන් කෑන්ඩල් reversal. Follow-through/volume පරීක්ෂා කරන්න.</p>
+
+          <p><b>Inside Bar:</b> Mother bar එක තුළ එකතු වීම. Trend සමඟ බිඳවැටීම් සාපේක්ෂව පිරිසිදු.</p>
+
+          <div class="callout"><i class="fa-solid fa-lightbulb icon"></i>
+            <b>Fresh</b> මට්ටම්වල patterns > බහු වාර ගැට ගැසුණු “දැල්මට” මට්ටම්වල patterns.
+          </div>
+        `
+      },
+      {
+        title: "3) ප්‍රමුඛ Indicators: RSI, MACD, Bollinger Bands",
+        body: `
+          <p><b>RSI(14)</b> ගැටළු/ලාභ වේගය මනිනුයි. 70–80 overbought, 20–30 oversold. Bull trends වලදී RSI 40–50 අතර
+          රැඳෙමින් තව ඉහළට; bear trends වලදී 50 ට අඩු. <b>Divergence</b> සොයන්න.</p>
+
+          <p><b>MACD(12-26-9)</b> signal line ඉක්මවීම/පහළ යාම momentum වෙනස්කම් පෙන්වයි. Histogram ↑ → ශක්තිමත්; ↓ → කම්පනය
+          අවම වෙයි.</p>
+
+          <p><b>Bollinger Bands(20,2σ)</b> — Squeeze → අඩු අනුක්‍රමිකතාවෙන් විශාල චලනයකට පෙර.
+          Expansion → trend දළ වීම. Trend වලදී “walk the band” වීම දක්නට ලැබේ.</p>
+
+          <div class="callout"><i class="fa-solid fa-sliders icon"></i>
+            සාමාන්‍ය සැකසුම්: RSI <b>14</b>, MACD <b>12-26-9</b>, BB <b>20, 2σ</b>. වෙනස් කළහොත් හේතුවක් තියන්න.
+          </div>
+        `
+      },
+      {
+        title: "4) Trend Lines & Channels නිවැරදිව ඇඳීම",
+        body: `
+          <p>අවම වෂින්දු <b>දෙකක්</b> සම්බන්ධ කරන්න (තවත් touch එකක් → තහවුරු). Wicks↔Wicks හෝ Closes↔Closes — එකම
+          ක්‍රමයක් සෑම විටම භාවිතා කරන්න. සමාන්තර රේඛාවක් ඇඳලා <b>channel</b> හදා ගන්න.</p>
+          <ul class="list">
+            <li>Bias එකට ගැළපෙන්න ඇඳන්නේ නැහැ. Structure එක පිළිපදින්න.</li>
+            <li>Break + <i>retest</i> + hold → උසස් ගුණාත්මක ඇතුල් වීම.</li>
+            <li>Trend line + HTF මට්ටම + RSI/MACD confluence → උසස් පිළිගැනීම.</li>
+          </ul>
+        `
+      },
+      {
+        title: "5) Support/Resistance කලාප ලෙස",
+        body: `
+          <p>එක රේඛාවකට වඩා <b>කලාප</b> ලෙස සිතන්න. දෛනික/සතිපතා මට්ටම් වඩා බලවත්. Range තුළ 50% midline එක
+          බහු වාරයක් ආකර්ෂණය කරයි.</p>
+          <ul class="list">
+            <li><b>Freshness:</b> කාලය දිගට අටු නොලැබුණු මට්ටම් > නිතරම testing වුණු මට්ටම්.</li>
+            <li><b>Role flip:</b> Resistance→Support / Support→Resistance.</li>
+            <li><b>Close vs Wick:</b> HTF close තීරණාත්මක; stray wicks trap විය හැක.</li>
+          </ul>
+        `
+      },
+      {
+        title: "6) Multi-Timeframe & Confluence",
+        body: `
+          <p>ඉහළ කාල පරിധියෙන් bias ගන්න; මැද/අඩු කාල පරിധීන්හි entry සොයන්න. Indicators තහවුරු කිරීමට
+          පමණක් භාවිතා කරන්න.</p>
+          <div class="callout"><i class="fa-solid fa-layer-group icon"></i>
+            උදාහරණය: Weekly close එකෙන් resistance ඉහලින් → bias up.
+            Daily pullback support වල hammer + RSI 45–55.
+            1H bullish engulfing + MACD cross → entry; stop support යට.
+          </div>
+        `
+      },
+      {
+        title: "7) අවදානම කළමනාකරණය",
+        body: `
+          <p><b>Invalidation</b> පෙර නිර්වචනය කරගන්න. Stop එක structure බිඳෙන තැන. Trade එකකට ගන්න අවදානම
+          ගිණුමට 0.5%–2% වටා පමණක් තබා ගන්න.</p>
+          <ul class="list">
+            <li>R:R අවම වශයෙන් 1:1.5 ~ 1:3.</li>
+            <li>FTA හි කොටස් ගන්න; stop BE වෙලා යාමකට structure හේතුවක් අවශ්‍යයි.</li>
+            <li>Revenge trading වලට නොයන්න.</li>
+          </ul>
+          <div class="warn"><i class="fa-solid fa-triangle-exclamation icon"></i>
+            Leverage තErrorsත් වර්ධනය කරයි. Stop පුළුල් නම් size අඩුකරන්න.
+          </div>
+        `
+      },
+      {
+        title: "8) සරಳ Checklist එක",
+        body: `
+          <ul class="list">
+            <li>HTF bias කුමක්ද?</li>
+            <li>Fresh S/R + trend line/channel වත්ද?</li>
+            <li>Pattern + Indicator + Level <b>confluence</b> තියෙනවද?</li>
+            <li>Invalidation / targets / R:R?</li>
+            <li>ඇයි <i>නො</i>එන්නෙ? (No-trade ද අර්ථවත් තීරණයක්.)</li>
+          </ul>
+        `
+      },
+      {
+        title: "9) පොදු වැරදි",
+        body: `
+          <ul class="list">
+            <li>Breakouts පැටළීම → Retest හෝ LTF structure බලා ඇතුල් වීම.</li>
+            <li>Indicators අතිරික්ත කිරීම.</li>
+            <li>HTF නොගෞරව කිරීම.</li>
+            <li>Stops මාරු කිරීම structure හේතුවක් නැතුව.</li>
+            <li>Cherry-pick backtests → විවිධ දත්ත කාලයන් පරීක්ෂා කරන්න.</li>
+          </ul>
+        `
+      }
+    ],
+    footerNote: `අධ්‍යාපනමය අරමුණක් සදහා. ජර්නල් කිරීම, HTF-first, සහ අවදානම පාලනය සමඟ යොදන්න.`
+  },
+
+  /* ==================== TAMIL ==================== */
+  ta: {
+    headTitle: "தொழில்நுட்ப பகுப்பு — Candlesticks • Indicators • Trend Lines",
+    langLabel: "மொழி",
+    heroTitle: "Candlesticks, Indicators, Trend Lines மூலம் விலைப் பகுப்பாய்வு",
+    heroIntro: `
+      Technical Analysis (TA) என்பது விலை/பரிமாற்ற தரவின் நடத்தை வைத்து <b>சாத்தியக்</b> தீர்மானங்கள் எடுக்கும் முறை.
+      24/7 இயங்கும் கிரிப்டோ சந்தையில், TA மெழுகுவர்த்திகளை திட்டமாக மாற்ற உதவுகிறது.
+      இங்கு <b>candlestick அடிப்படைகள்</b>, முக்கிய <b>patterns</b>, <b>RSI / MACD / Bollinger Bands</b>,
+      <b>trend lines</b>, <b>support/resistance</b> பகுதிகள், multi-timeframe ஓட்டம் மற்றும்
+      <b>risk management</b> ஆகியவற்றை நடைமுறை வழியில் பார்ப்போம்.
+    `,
+    disclaimer: `
+      <span class="tag">இது நிதி ஆலோசனை அல்ல</span>
+      சந்தை அபாயகரம். எப்போதும் stop/invalidations வரையறுத்து அளவான செயலில் ஈடுபடுங்கள்.
+    `,
+    sections: [
+      {
+        title: "1) Candlestick அடிப்படைகள்",
+        body: `
+          <p>ஒரு மெழுகுவர்த்தி <b>Open, High, Low, Close</b> (OHLC) மதிப்புகளை சுருக்குகிறது.
+          உடல் Open→Close, மீசை/விக் அதிக/குறைந்த நிலைகளை காட்டும். HTF (1D/1W) சிக்னல்கள் வலுவானவை.</p>
+          <ul class="list">
+            <li><b>Context:</b> Trend-இலும் Range-இலும் ஒரே candle-க்கு வேறு அர்த்தம்.</li>
+            <li><b>Three C:</b> <i>Context, Confirmation, Confluence</i> — தனித்து candleயை நம்ப வேண்டாம்.</li>
+            <li><b>Close முக்கியம்:</b> HTF close உண்மையான break/reject ஐ உறுதிப்படுத்தும்.</li>
+          </ul>
+        `
+      },
+      {
+        title: "2) முக்கிய Candlestick Patterns",
+        body: `
+          <p>Patterns வாக்குறுதி அல்ல; <i>குறிப்புகள்</i>. புதிய நிலைகள், தெளிவான trend, volume/indicator confluence
+          உள்ள இடங்களில் சிறந்து செயல்படும்.</p>
+
+          <p><b>Engulfing:</b> முந்தைய உடலை முழுவதும் மூடுவது. Support பகுதியில் bullish engulfing → வாங்குபவர் கட்டுப்பாடு.
+          Resistance பகுதியில் bearish engulfing → கீழ் தொடர்ச்சி.</p>
+
+          <p><b>Doji / Spinning Top:</b> சிறிய உடல், நீண்ட விக்குகள் → தயக்கம். நிலைகளில் rejections இருந்தால் வலிமை பெறும்.</p>
+
+          <p><b>Hammer / Shooting Star:</b> கீழ் நீண்ட விக் (hammer) — தேவை; மேல் நீண்ட விக் (shooting star) — வழங்கல்.
+          HTF + நிலைகள் சேரும் போது நம்பத்தகுதி அதிகம்.</p>
+
+          <p><b>Morning/Evening Star</b> மற்றும் <b>Inside Bar</b> — தொடர்ச்சியும் breakout-களும் confluence இருந்தால் சிறப்பு.</p>
+        `
+      },
+      {
+        title: "3) மைய Indicators: RSI, MACD, Bollinger Bands",
+        body: `
+          <p><b>RSI(14)</b> வேகத்தை அளக்கும். 70–80 overbought; 20–30 oversold. Bull-இல் RSI 40–50 மேல் தங்கும்; bear-இல் 50 கீழ் தோல்வி அடையும்.
+          <b>Divergence</b> (HH vs LH / LL vs HL) கவனியுங்கள்.</p>
+
+          <p><b>MACD(12-26-9)</b> signal line கடக்கும்போது momentum மாற்றம். Histogram உயர்வு → வலிமை; குறைவு → பலவீனம்.</p>
+
+          <p><b>Bollinger Bands(20,2σ)</b> — Squeeze → பின்னர் பெரும் மாற்றம் வாய்ப்பு; Expansion → ஓடும் trend.
+          Trend-இல் “walk the band” நடக்கும்; range-இல் mean-revert.</p>
+        `
+      },
+      {
+        title: "4) Trend Lines & Channels வரைவது",
+        body: `
+          <p>குறைந்தது <b>இரண்டு</b> swing புள்ளிகளை இணைக்கவும் (மூன்றாவது தொடுதல் → உறுதி).
+          Wicks↔Wicks அல்லது Closes↔Closes — ஒன்றைத் தேர்ந்து தொடர்ச்சியாக பயன்படுத்தவும்.
+          இணை கோடு போட்டு <b>channel</b> உருவாக்கவும்.</p>
+        `
+      },
+      {
+        title: "5) Support/Resistance — பகுதிகள்",
+        body: `
+          <p>ஒரே கோடு அல்ல, <b>பகுதிகள்</b> போல யோசியுங்கள். HTF(1D/1W) பகுதிகள் வலிமையானவை. Range நடுவண் 50% அடிக்கடி காந்தம் போல செயல்படும்.</p>
+          <ul class="list">
+            <li><b>Freshness:</b> நீண்டநாள் சோதிக்காத நிலைகள் > அடிக்கடி சோதிக்கப்பட்டவை.</li>
+            <li><b>Role flip:</b> R→S / S→R மாற்றங்கள்.</li>
+            <li><b>Close vs Wick:</b> HTF close நிலையைத் தீர்மானிக்கும்.</li>
+          </ul>
+        `
+      },
+      {
+        title: "6) Multi-TF ஓட்டம் & Confluence",
+        body: `
+          <p>மேல் TF-ல் bias, நடு/குறைந்த TF-ல் entry. Indicators உறுதிப்படுத்துவதற்கே பயன்படுத்தவும்.</p>
+          <div class="callout"><i class="fa-solid fa-layer-group icon"></i>
+            எடுத்துக்காட்டு: Weekly close R மேல் → bias up. Daily pullback S-இல் hammer + RSI 45–55.
+            1H bullish engulf + MACD cross → entry; stop S கீழ்.
+          </div>
+        `
+      },
+      {
+        title: "7) ஆபத்து மேலாண்மை",
+        body: `
+          <p><b>Invalidation</b> முன்கூட்டியே நிர்ணயிக்கவும். Setup க்கு பொருத்தமான இடத்தில் stop வைக்கவும்.
+          ஒரு trade-க்கு 0.5%–2% கணக்கு அபாயம் மட்டுமே.</p>
+          <ul class="list">
+            <li>R:R குறைந்தது 1:1.5 ~ 1:3.</li>
+            <li>FTA-வில் பகுதி லாபம்; BE க்கு நகர்த்துவது கட்டமைப்பு காரணத்துடன் மட்டும்.</li>
+            <li>Revenge trading தவிர்க்கவும்.</li>
+          </ul>
+          <div class="warn"><i class="fa-solid fa-triangle-exclamation icon"></i>
+            Leverage தவறுகளையும் பெரிதாக்கும். Stop விசாலம் என்றால் அளவை குறைக்கவும்.
+          </div>
+        `
+      },
+      {
+        title: "8) எளிய Checklist",
+        body: `
+          <ul class="list">
+            <li>HTF bias என்ன?</li>
+            <li>புதிய S/R + trend line/channel உள்ளதா?</li>
+            <li>Pattern + Indicator + Level <b>confluence</b> உள்ளதா?</li>
+            <li>Invalidation / targets / R:R?</li>
+            <li>இந்த trade-ஐ <i>எதனால்</i> தவிர்ப்பேன்?</li>
+          </ul>
+        `
+      },
+      {
+        title: "9) பொதுவான பிழைகள்",
+        body: `
+          <ul class="list">
+            <li>Breakout-ஐ துரத்துதல் → Retest/LTF அமைப்பு காத்திருங்கள்.</li>
+            <li>Indicators அதிகம் சேர்த்தல்.</li>
+            <li>HTF புறக்கணிப்பு.</li>
+            <li>காரணமின்றி stop நகர்த்தல்.</li>
+            <li>Cherry-pick backtests → பரவலான தரவுடன் சோதிக்கவும்.</li>
+          </ul>
+        `
+      }
+    ],
+    footerNote: `கல்வி நோக்கத்துக்காக. Journal, HTF-first, மற்றும் கட்டுப்படுத்தப்பட்ட அபாயம் — இதுவே அடித்தளம்.`
+  }
+};
+
+/* ========== Render ========== */
+
+const contentEl = document.getElementById('content');
+const langEl = document.getElementById('lang');
+const headTitleEl = document.getElementById('headTitle');
+const heroTitleEl = document.getElementById('heroTitle');
+const heroIntroEl = document.getElementById('heroIntro');
+const disclaimerEl = document.getElementById('disclaimer');
+const langLabelEl = document.getElementById('langLabel');
+const toast = document.getElementById('toast');
+
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 2600);
+}
+
+function render(lang='en'){
+  const t = translations[lang] || translations.en;
+
+  // Header + hero
+  headTitleEl.textContent = t.headTitle;
+  document.title = t.headTitle;
+  langLabelEl.textContent = t.langLabel;
+  heroTitleEl.textContent = t.heroTitle;
+  heroIntroEl.innerHTML = t.heroIntro;
+  disclaimerEl.innerHTML = t.disclaimer;
+
+  // Sections
+  contentEl.innerHTML = '';
+  t.sections.forEach((sec, i)=>{
+    const card = document.createElement('article');
+    card.className = 'card';
+    // some sections side-by-side for rhythm
+    if([2,3,4].includes(i)) card.classList.add('half');
+    card.innerHTML = `
+      <h3>${sec.title}</h3>
+      ${sec.body}
+    `;
+    contentEl.appendChild(card);
+  });
+
+  // Footer note
+  const foot = document.createElement('div');
+  foot.className = 'card';
+  foot.innerHTML = `<p class="foot">${t.footerNote}</p>`;
+  contentEl.appendChild(foot);
+}
+
+// initial render
+render('en');
+
+// language switcher
+langEl.addEventListener('change', (e)=>{
+  const val = e.target.value;
+  if(['en','si','ta'].includes(val)){
+    render(val);
+    showToast(val==='en' ? 'Switched to English' : (val==='si' ? 'සිංහලට මාරුවී ඇත' : 'தமிழுக்கு மாற்றப்பட்டது'));
+  } else {
+    // keep English content but notify user (as requested: others listed but not active)
+    langEl.value = 'en';
+    showToast('This language is coming soon. Showing English for now.');
+    render('en');
+  }
+});
+</script>
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
