@@ -1,674 +1,1192 @@
-<!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="UTF-8">
-  <title>Untitled</title>
-  
-
-</head>
-<body>
-<!-- partial:index.partial.html -->
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>Technical Analysis (TA) — Candlesticks • Indicators • Trend Lines</title>
+  <title>Futures Assets Mockup — with 6M Trend Profit Cards (Top bars fixed, Frame Removed, +20 trades, random small-loss duo) — Margin Persistent</title>
 
-  <!-- Binance Plex Font + Icons -->
-  <link href="https://db.onlinewebfonts.com/c/d05c19ccecf7003d248c60ffd6b5e8f7?family=Binance+PLEX" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <!-- Binance PLEX for better '1' glyph -->
+  <link href="https://db.onlinewebfonts.com/c/d05c19ccecf7003d248c60ffd6b5e8f7?family=Binance+PLEX" rel="stylesheet"/>
+
+  <!-- html2canvas for saving only the PNL card -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
 
   <style>
     :root{
-      --bg:#0f1115; --panel:#1e2329; --text:#e7edf3; --muted:#9aa4af;
-      --accent:#f0b90b; --green:#3acf87; --red:#e04b4a; --blue:#5da6ff;
-      --card:#151a21; --border:#2a3139;
+      --app-w: 375px;
+      --bg-base:#1E2128;
+      --panel-bg:#1e2127;
+      --secondary-bg:#32383e;
+      --text-secondary:#7c828a;
+      --text-green:#3acf87;
+      --text-red:#e04b4a;
+      --btn-bg:#2f3339;
+      --highlight:#f0b90b;
+
+      --seg-w: 170px;
+      --seg-h: 24px;
+      --seg-pad: 2px;
+      --seg-gap: 2px;
+      --seg-r: 10px;
+      --seg-thumb-r: 6px;
+      --seg-font: 12px;
+
+      --frame-gutter-x: 8px;
+      --card-inset: 2px;
+
+      --slot-top: 16px;
+      --slot-bottom: 14px;
+
+      --bottom-nav-h: 64px;
+
+      --scene-offset-x: -0.5cm;
+      --scene-offset-y: 1.1cm;
     }
-    *{box-sizing:border-box}
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    html,body{height:100%}
     body{
-      margin:0; font-family:"Binance PLEX",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
-      background:linear-gradient(180deg,#0f1115 0%, #0b0d11 100%); color:var(--text);
+      background:var(--bg-base);
+      display:flex;justify-content:center;align-items:flex-start;
+      padding:0;min-height:100vh;color:#E1E3E8
     }
-    header{
-      position:sticky; top:0; z-index:20;
-      background:rgba(30,35,41,.9); backdrop-filter:blur(8px);
-      border-bottom:1px solid var(--border);
+    .app{
+      width:var(--app-w);max-width:100%;
+      background:var(--bg-base);color:#E1E3E8;
+      border:none;border-radius:0;overflow:visible;position:relative;
+      padding:12px var(--frame-gutter-x) 80px;
+      font-family:Inter, "Segoe UI", Roboto, sans-serif
     }
-    .wrap{max-width:1100px; margin:0 auto; padding:14px 16px; display:flex; gap:12px; align-items:center; justify-content:space-between}
-    .brand{display:flex; gap:12px; align-items:center}
-    .logo{
-      width:36px; height:36px; display:grid; place-items:center; border-radius:9px;
-      background:conic-gradient(from 220deg, var(--accent), #ffd761, var(--accent));
-      color:#111; font-weight:900;
-      box-shadow:0 2px 18px rgba(240,185,11,.3);
+    .amount,.value,.rate{font-family:Inter, "Segoe UI", Roboto, sans-serif!important}
+    button{cursor:pointer;border:none;background:transparent;font:inherit;color:inherit}
+
+    .top-stack{
+      position:sticky; top:0; z-index:30;
+      background:var(--bg-base);
+      border-bottom:none !important;
+      padding-bottom:8px; margin-bottom:8px;
     }
-    h1{font-size:18px; margin:0; letter-spacing:.3px}
-    .select{
-      background:#12161c; color:var(--text); border:1px solid var(--border);
-      padding:8px 12px; border-radius:10px; font-size:14px;
+
+    .top-toggle{
+      position:relative;width:var(--seg-w);
+      margin:2px auto 6px;padding:var(--seg-pad);
+      background:#20242c;border:1px solid #343a40;border-radius:var(--seg-r);
+      display:grid;grid-template-columns:1fr 1fr;gap:var(--seg-gap);
     }
-    main{max-width:1100px; margin:24px auto; padding:0 16px 60px}
-    .hero{
-      background:radial-gradient(1200px 300px at 10% -20%,rgba(240,185,11,.08),transparent),
-                 linear-gradient(180deg,#12161c, #0f1217);
-      border:1px solid var(--border); border-radius:16px; padding:22px 18px; margin-bottom:18px;
+    .top-toggle .seg-thumb{
+      position:absolute;top:var(--seg-pad);bottom:var(--seg-pad);left:var(--seg-pad);
+      width:calc(50% - var(--seg-gap));
+      background:#2b303a;border:1px solid #3f4652;border-radius:var(--seg-thumb-r);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.02),0 2px 8px rgba(0,0,0,.35);
+      transition:transform .25s ease;transform:translateX(0%);
     }
-    .hero h2{margin:0 0 8px 0; font-size:22px}
-    .meta{display:flex; gap:18px; flex-wrap:wrap; color:var(--muted); font-size:13px}
-    .grid{display:grid; gap:16px; grid-template-columns:repeat(12,1fr)}
-    .card{
-      grid-column:span 12; background:var(--card); border:1px solid var(--border);
-      border-radius:14px; padding:16px 16px 18px 16px;
+    .top-toggle .toggle-btn{
+      position:relative;z-index:1;height:var(--seg-h);line-height:var(--seg-h);
+      padding:0 8px;font-size:var(--seg-font);font-weight:700;color:#9ba3af;border-radius:var(--seg-thumb-r);
+      letter-spacing:.2px;
     }
-    @media(min-width:860px){
-      .card.half{grid-column:span 6}
-      .card.third{grid-column:span 4}
+    .top-toggle .toggle-btn.active{ color:#fff; }
+
+    .main-nav{display:flex;justify-content:flex-start;gap:10px;margin:2px 0 6px 0}
+    .main-nav button{padding:8px 6px;font-size:13px;color:#A1A6B0}
+    .main-nav button.active{color:#FFF;border-bottom:2px solid #FFF}
+    .main-nav button:first-child{ margin-left:-6px; }
+
+    .sub-toggle{display:flex;gap:6px;margin:8px 0 0 0;border-bottom:none !important;box-shadow:none !important;}
+    .sub-toggle .toggle-btn{padding:4px 8px;font-size:11px;color:#A1A6B0;border-radius:6px;background:transparent;}
+    .sub-toggle .toggle-btn.active{background:#323742;color:#FFF}
+
+    .balance-panel{margin:12px 0}
+    .balance-header{display:flex;justify-content:space-between;align-items:center;color:#A1A6B0;font-size:12px}
+    .balance-header span{display:flex;align-items:center;gap:10px}
+    .balance-amount{display:flex;align-items:flex-end;margin:8px 0}
+    .amount{font-size:28px;font-weight:600}
+    .currency{margin-left:8px;color:#A1A6B0;font-size:12px}
+    .realized-pnl{color:#A1A6B0;font-size:12px}
+    .realized-pnl .gain{color:var(--text-green);font-weight:700}
+
+    .small-balances{display:flex;margin-top:12px;justify-content:space-between}
+    .small-item{display:flex;flex-direction:column}
+    .small-item .label{color:#A1A6B0;font-size:12px}
+    .small-item .value{font-size:14px;font-weight:600;margin-top:4px}
+
+    .actions{display:flex;margin:14px 0}
+    .btn{flex:1;padding:8px 0;font-size:13px;margin:0 4px;border-radius:6px;background:#323742;color:#A1A6B0}
+    .btn.primary,.btn.active{background:#F3BA2F;color:#1E2128}
+
+    .sub-nav-2{
+      position:sticky; top:12px; z-index:20;
+      display:flex;align-items:flex-end;gap:16px;margin:0 0 8px 0;
+      background:linear-gradient(var(--bg-base), var(--bg-base));
+      padding-top:6px;
     }
-    .card h3{margin:0 0 8px 0; font-size:18px}
-    .card p{margin:8px 0; line-height:1.6; color:#dfe6ee}
-    .list{margin:8px 0 0 0; padding-left:18px}
-    .tag{display:inline-block; background:#12161c; border:1px solid var(--border);
-         padding:4px 8px; border-radius:999px; font-size:12px; color:var(--muted); margin-right:6px}
-    .callout{
-      background:linear-gradient(180deg, #14221a, #10161a);
-      border:1px solid #203029; border-radius:12px; padding:14px; color:#d7ffe9
+    .sub-nav-2 button{position:relative;padding:0 6px 8px;font-size:14px;font-weight:700;letter-spacing:.1px;color:var(--text-secondary);line-height:1}
+    .sub-nav-2 button.active{color:#fff}
+
+    .feed{
+      overflow-y:auto; overscroll-behavior-y: contain;
+      padding:12px 0 20px; background:var(--bg-base);
+      scrollbar-width:none; border-top:none !important;
     }
-    .warn{
-      background:linear-gradient(180deg, #2a1515, #1a0f0f);
-      border:1px solid #3a2020; border-radius:12px; padding:14px; color:#ffd8d8
+    .feed::-webkit-scrollbar{display:none}
+
+    .empty-state{margin:0 0;background:var(--panel-bg);border-radius:10px;padding:20px;text-align:center;border:1px solid #2b2f36}
+    .empty-state i{font-size:28px;opacity:.9;margin-bottom:10px;display:inline-block}
+    .empty-state h4{font-size:14px;margin-bottom:6px}
+    .empty-state p{font-size:12px;color:#A1A6B0;margin-bottom:12px}
+    .empty-state .cta{background:#F3BA2F;color:#1E2128;font-size:12px;padding:8px 12px;border-radius:6px;display:inline-flex;align-items:center;gap:6px}
+
+    .trade-panel { background: var(--panel-bg); padding: 12px; border-radius: 8px; border: none; box-shadow: none;
+      margin-left:calc(-1 * (var(--frame-gutter-x) - var(--card-inset)));
+      margin-right:calc(-1 * (var(--frame-gutter-x) - var(--card-inset)));
     }
-    .kbd{padding:2px 6px; border:1px solid var(--border); border-radius:6px; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace; background:#11151b}
-    .foot{margin-top:14px; font-size:12.5px; color:var(--muted)}
-    .hr{height:1px; background:var(--border); margin:12px 0}
-    /* toast */
-    #toast{position:fixed; right:18px; bottom:18px; background:#12161c; color:var(--text);
-      border:1px solid var(--border); border-radius:10px; padding:10px 12px; opacity:0; transform:translateY(12px);
-      transition:.25s ease; font-size:14px; z-index:50}
-    #toast.show{opacity:1; transform:translateY(0)}
-    /* code bullets look */
-    .icon{color:var(--accent); margin-right:8px}
-    a{color:var(--blue); text-decoration:none}
-    .pill{display:inline-flex; align-items:center; gap:6px; background:#12161c; border:1px dashed var(--border);
-      padding:6px 10px; border-radius:999px; color:var(--muted); font-size:12px}
+    .trade-panel + .trade-panel{margin-top:8px}
+    .trade-panel .header { display: flex; align-items: center; margin-bottom: 8px; }
+    .icon-buy, .icon-sell { color: #fff; width: 20px; height: 20px; display:flex;align-items:center;justify-content:center;
+      font-size: 12px; font-weight: 700; margin-right: 8px; border-radius: 2px; }
+    .icon-buy { background: var(--text-green); }
+    .icon-sell { background: var(--text-red); }
+    .symbol { font-size: 14px; font-weight: 600; margin-right: 6px; color:#fff; }
+    .tag { background: var(--secondary-bg); color: var(--text-secondary); font-size: 10px; padding: 1px 4px; margin-right: 4px; text-transform: uppercase; border-radius: 3px; }
+    .exclamations { display: flex; margin-left: 6px; }
+    .exclamations span { position: relative; width: 2px; height: 10px; background: var(--secondary-bg); margin: 0 1px; border-radius: 1px; transition: background 0.3s ease; }
+    .exclamations span::after { content: ''; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%); width: 2px; height: 2px; background: inherit; border-radius: 50%; }
+    .exclamations span.green, .exclamations span.green::after { background: var(--text-green); }
+    .share { margin-left: auto; color: var(--text-secondary); font-size: 16px; cursor: pointer; }
+
+    .content-columns { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; gap: 8px; }
+    .column { display: flex; flex-direction: column; }
+    .column.right { text-align: right; }
+    .stat { margin-bottom: 8px; }
+    .label { font-size: 12px; color: var(--text-secondary); border-bottom: 1px dotted var(--text-secondary); padding-bottom: 2px; display: inline-block; }
+    .label.no-line { border-bottom: none; }
+    .value { font-size: 14px; font-weight: 400; color: #fff; transition: all 0.2s ease; }
+    .value.green, .value.percent.green { color: var(--text-green); font-size: 18px; font-weight: 700; }
+    .value.red, .value.percent.red { color: var(--text-red); font-size: 18px; font-weight: 700; }
+    .margin-ratio-value { font-size: 12px !important; }
+
+    .tp-actions{display:flex;justify-content:space-between;gap:8px;margin-top:2px}
+    .tp-btn{flex:1;background:var(--btn-bg);color:#fff;border:none;border-radius:6px;padding:6px 0;font-size:12px;cursor:pointer;transition:background .3s}
+    .tp-btn:hover{background:var(--secondary-bg)}
+
+    .bottom-nav{
+      position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+      width:var(--app-w);background:#2A2F3A;display:flex;padding:8px 0;
+      border-top:1px solid #3a3f49; z-index:40;
+    }
+    .bottom-nav button{flex:1;display:flex;flex-direction:column;align-items:center;font-size:10px;color:#A1A6B0}
+    .bottom-nav button.active{color:#FFF}
+
+    .photo-slot{
+      width:var(--slot-top); height:var(--slot-top);
+      display:inline-block; position:relative; overflow:hidden; border:none; outline:none;
+      background:transparent; border-radius:4px;
+    }
+    .photo-slot--bottom{ width:var(--slot-bottom); height:var(--slot-bottom); border-radius:3px; }
+    .photo-slot input[type="file"]{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+    .photo-slot img{ width:88%; height:88%; margin:6%; object-fit:cover; display:block; border:none; outline:none; background:transparent; image-rendering:auto; }
+    .photo-slot--bottom img{ width:90%; height:90%; margin:5%; object-fit:cover; display:block; }
+    .photo-empty::after{ content:''; position:absolute; inset:0; background:transparent; }
+
+    .pnl-modal-backdrop{
+      position:fixed; inset:0; background:rgba(0,0,0,.6);
+      display:none; align-items:flex-end; justify-content:center; z-index:1000;
+      padding:0 12px calc(var(--bottom-nav-h) + 10px);
+    }
+    .pnl-modal-backdrop.open{ display:flex; }
+    .pnl-modal{ position:relative; max-width:520px; width:100%; outline:0; border:0; background:transparent; }
+    .pnl-close{ display:none !important; }
+
+    /* Scene holds the carousel (kept same look/offset) */
+    .pnl-scene{
+      background:#2f343d;
+      border:1px solid #3a3f49;
+      border-radius:18px;
+      padding:12px 12px 16px;
+      margin:0 auto;
+      width:calc(350px + 1.2cm);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      box-shadow:0 8px 20px rgba(0,0,0,.35) inset;
+      transform: translate(var(--scene-offset-x), var(--scene-offset-y));
+    }
+
+    /* >>> NEW: Horizontal carousel for up to 3 PNL cards <<< */
+    .pnl-carousel{
+      width:100%;
+      display:flex;
+      gap:12px;
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+      padding-bottom:6px;
+    }
+    .pnl-carousel::-webkit-scrollbar{ height:6px; background:transparent; }
+    .pnl-carousel::-webkit-scrollbar-thumb{ background:#3a3f49; border-radius:10px; }
+
+    .pnl-card {
+      font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif !important;
+      font-feature-settings:"tnum"1,"lnum"1;
+      letter-spacing:.15px;
+      color:#fff;
+      background:url('https://iili.io/KesMjcb.md.gif') no-repeat center/cover;
+      border-radius:16px;
+      width:calc(350px - 1cm);
+      flex:0 0 calc(350px - 1cm);
+      overflow:hidden;
+      box-shadow:0 0 10px rgba(0,0,0,.6);
+      border:2px solid #2e2e2e;
+      position:relative;
+      margin:0 auto;
+      scroll-snap-align:center;
+    }
+    .pnl-card .card-header { padding:16px; display:flex; align-items:center; gap:12px; margin-bottom:1cm; }
+    .pnl-card .avatar { width:40px; height:40px; border-radius:50%; overflow:hidden; flex:0 0 40px; }
+    .pnl-card .avatar img { width:100%; height:100%; object-fit:cover; }
+    .pnl-card .username { display:flex; flex-direction:column; }
+    .pnl-card .username span:first-child { font-weight:600; font-size:13px; }
+    .pnl-card .username span:last-child { font-size:11px; opacity:.9; }
+
+    .pnl-card .card-body { padding:0 16px 20px 16px; margin-bottom:1cm; }
+    .pnl-card .title { font-size:16px; font-weight:700; text-transform:uppercase; }
+    .pnl-card .position { margin:6px 0 8px; display:inline-flex; align-items:center; gap:10px; font-size:13px; font-weight:600; }
+    .pnl-card .position .side { color:#ff6b6b; }
+    .pnl-card .position .divider { width:1px; height:12px; background:#6a6a6a; display:inline-block; transform:translateY(1px); }
+    .pnl-card .position .lev { color:#b3b3b3; }
+    .pnl-card .pnl { color:#0ecb81; font-size:32px; font-weight:700; margin:8px 0; letter-spacing:-.5px; }
+    .pnl-card .usdt { font-size:16px; margin-left:4px; font-weight:600; color:#fff; }
+    .pnl-card .prices { display:flex; justify-content:space-between; font-size:12px; margin-top:8px; }
+    .pnl-card .prices .label { color:#888; font-size:11px; }
+    .pnl-card .prices .last { transform:translateX(-2.55cm); }
+
+    .pnl-card .card-footer { background:#000; padding:0; display:block; position:relative; }
+    .pnl-card .footer-line { display:block; width:100%; height:1px; background:#444; margin:0; }
+    .pnl-card .footer-content { padding:16px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .pnl-card .footer-left { font-size:12px; display:flex; align-items:flex-start; gap:8px; line-height:1.1; }
+    .pnl-card .footer-left .binance-badge { display:inline-flex; align-items:center; gap:6px; margin-bottom:2px; transform:translateX(-.3cm); }
+    .pnl-card .footer-left .binance-badge img { width:16px; height:16px; }
+    .pnl-card .footer-left .binance-badge .brand { color:#fcd535; font-weight:800; }
+
+    /* >>> FUTURES bigger (just below Binance badge) <<< */
+    .pnl-card .futures-ref{
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:.8px;
+      transform:translateX(.3cm);
+      text-transform:uppercase;
+    }
+    /* >>> Referral line slightly lower <<< */
+    .pnl-card .referral{
+      font-size:12px;
+      opacity:.95;
+      margin-top:6px;
+      position:relative;
+      top:3px; /* tiny push down */
+      transform:translateX(.3cm);
+    }
+
+    .pnl-card .qr { width:60px; height:60px; background:#fff; border-radius:6px; overflow:hidden; }
+    .pnl-card .qr img { width:100%; height:100%; object-fit:cover; }
+
+    .pnl-underbar{
+      margin:14px auto 0; width:calc(350px - 1cm);
+      display:flex; flex-direction:column; align-items:flex-start;
+      font-size:13px;
+    }
+    .pnl-underbar .selector { margin:6px 0 10px; display:flex; justify-content:flex-start; gap:20px; font-size:13px; transform:translateX(calc(-2cm + 1.5cm)); }
+    .pnl-underbar .selector label { display:flex; align-items:center; gap:5px; cursor:pointer; }
+    .pnl-underbar .selector input[type="radio"] { accent-color:white; }
+    .pnl-underbar .bottom-bar { display:flex; justify-content:center; gap:10px; margin-top:8px; transform:translateX(-1.2cm); align-self:center; }
+    .pnl-underbar .action {
+      width:45px; height:45px; background:#1b1c22; border:1px solid #2e2f37; border-radius:12px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+      cursor:pointer; transition:transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .pnl-underbar .action:hover { transform:translateY(-2px); background:#242632; border-color:#3a3b47; }
+    .pnl-underbar .action img { width:18px; height:18px; display:block; }
+    .pnl-underbar .action span { font-size:10px; color:#cfd3dc; }
+
+    /* Force digit 1 to Binance PLEX when needed */
+    .pnl-card .one-glyph{
+      font-family: "Binance PLEX", Inter, "Segoe UI", system-ui, -apple-system, sans-serif !important;
+      font-weight: 700;
+      display:inline-block;
+      letter-spacing: 0;
+      transform: translateY(0.2px);
+    }
+    .no-one-stylize .one-glyph{ font-family: inherit !important; font-weight: inherit !important; }
+
+    /* >>> NEW: Month '1' tiny style <<< */
+    .pnl-card .month-one{
+      font-size: .80em;
+      line-height: 1;
+      display:inline-block;
+      transform: translateY(.2px);
+    }
   </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <div class="brand">
-      <div class="logo"><i class="fa-solid fa-candlestick-chart"></i></div>
-      <h1 id="headTitle">Technical Analysis — Candlesticks • Indicators • Trend Lines</h1>
+  <div class="app">
+    <div class="top-stack" id="topStack">
+      <header class="top-toggle" aria-label="Exchange or Wallet">
+        <span class="seg-thumb" aria-hidden="true"></span>
+        <button class="toggle-btn active" type="button">Exchange</button>
+        <button class="toggle-btn" type="button">Wallet</button>
+      </header>
+
+      <nav class="main-nav" aria-label="Main sections">
+        <button>Overview</button>
+        <button class="active">Futures</button>
+        <button>Spot</button>
+        <button>Funding</button>
+      </nav>
+
+      <div class="sub-toggle" role="tablist" aria-label="Futures type">
+        <button class="toggle-btn active" role="tab" aria-selected="true">USDⓢ-M</button>
+        <button class="toggle-btn" role="tab" aria-selected="false">COIN-M</button>
+      </div>
     </div>
-    <div>
-      <label class="pill"><i class="fa-solid fa-globe icon"></i><span id="langLabel">Language</span></label>
-      <select id="lang" class="select" aria-label="Language">
-        <option value="en" selected>English</option>
-        <option value="si">සිංහල (Sinhala)</option>
-        <option value="ta">தமிழ் (Tamil)</option>
-        <option value="ar">العربية (Arabic) — coming soon</option>
-        <option value="th">ไทย (Thai) — coming soon</option>
-        <option value="fr">Français — coming soon</option>
-        <option value="es">Español — coming soon</option>
-        <option value="de">Deutsch — coming soon</option>
-        <option value="hi">हिन्दी — coming soon</option>
-        <option value="zh">中文 — coming soon</option>
-      </select>
+
+    <section class="balance-panel" aria-label="Balances">
+      <div class="balance-header">
+        <span>Margin Balance <i id="eyeToggle" class="fas fa-eye" aria-hidden="true"></i></span>
+        <span class="icon-group" aria-label="Actions">
+          <label class="photo-slot photo-empty" data-slot="top-reward">
+            <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment">
+            <img alt="">
+          </label>
+          <label class="photo-slot photo-empty" data-slot="top-convert">
+            <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment">
+            <img alt="">
+          </label>
+          <label class="photo-slot photo-empty" data-slot="top-statement">
+            <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment">
+            <img alt="">
+          </label>
+        </span>
+      </div>
+
+      <div class="balance-amount">
+        <span id="amount" class="amount">Loading…</span>
+        <span class="currency">USD <i class="fas fa-chevron-down" aria-hidden="true"></i></span>
+      </div>
+
+      <div class="realized-pnl" id="pnl">
+        Today’s Realized PNL
+        <span id="realizedSpan" class="gain">Loading…</span>
+        <i class="fas fa-chevron-right" aria-hidden="true"></i>
+      </div>
+
+      <div class="small-balances">
+        <div class="small-item">
+          <div class="label">Wallet Balance (USD)</div>
+          <div class="value" id="walletValue">Loading…</div>
+        </div>
+        <div class="small-item">
+          <div class="label">Unrealized PNL (USD)</div>
+          <div class="value" id="unrealizedValue">Loading…</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="actions" aria-label="Quick actions">
+      <button class="btn primary active">Trade</button>
+      <button class="btn">Swap</button>
+      <button class="btn">Transfer</button>
+    </section>
+
+    <section class="positions" aria-label="Positions">
+      <nav class="sub-nav-2" id="stickyBar">
+        <button class="active">Positions</button>
+        <button>Assets</button>
+      </nav>
+
+      <div class="feed" id="feed">
+        <div class="empty-state" id="emptyState">
+          <i class="fa-solid fa-briefcase"></i>
+          <h4>You have no open positions</h4>
+          <p>Start a trade to see it listed here in real-time.</p>
+          <button class="cta"><i class="fa-solid fa-plus"></i> Open a Trade</button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="bottom-nav" aria-label="Bottom navigation" id="bottomNav">
+      <button>
+        <label class="photo-slot photo-slot--bottom photo-empty" data-slot="nav-home">
+          <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment"><img alt="">
+        </label>
+        <span>Home</span>
+      </button>
+      <button>
+        <label class="photo-slot photo-slot--bottom photo-empty" data-slot="nav-markets">
+          <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment"><img alt="">
+        </label>
+        <span>Markets</span>
+      </button>
+      <button>
+        <label class="photo-slot photo-slot--bottom photo-empty" data-slot="nav-trade">
+          <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment"><img alt="">
+        </label>
+        <span>Trade</span>
+      </button>
+      <button>
+        <label class="photo-slot photo-slot--bottom photo-empty" data-slot="nav-futures">
+          <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment"><img alt="">
+        </label>
+        <span>Futures</span>
+      </button>
+      <button class="active">
+        <label class="photo-slot photo-slot--bottom photo-empty" data-slot="nav-assets">
+          <input type="file" accept=".jpg,.jpeg,image/jpeg" capture="environment"><img alt="">
+        </label>
+        <span>Assets</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ===================== SHARE MODAL ===================== -->
+  <div class="pnl-modal-backdrop" id="pnlBackdrop" aria-hidden="true">
+    <div class="pnl-modal" role="dialog" aria-modal="true" aria-labelledby="pnlTitle">
+      <div class="pnl-scene">
+        <!-- >>> NEW: Horizontal carousel with up to 3 cards <<< -->
+        <div class="pnl-carousel" id="pnlCarousel">
+          <!-- Cards will be injected here (first one gets id="pnlCard") -->
+        </div>
+
+        <div class="pnl-underbar">
+          <div class="selector">
+            <label><input type="radio" name="infoMode" value="PNL" checked> PNL</label>
+            <label><input type="radio" name="infoMode" value="ROI"> ROI</label>
+            <label><input type="radio" name="infoMode" value="BOTH"> PNL & ROI</label>
+          </div>
+
+          <div class="bottom-bar" id="pnlActions">
+            <div class="action" title="Save"><img src="https://img.icons8.com/ios-glyphs/60/download--v1.png" alt="Save"><span>Save</span></div>
+            <div class="action" title="Copy"><img src="https://img.icons8.com/ios-glyphs/60/link--v1.png" alt="Copy"><span>Copy</span></div>
+            <div class="action" title="Telegram"><img src="https://img.icons8.com/color/60/telegram-app--v1.png" alt="Telegram"><span>Telegram</span></div>
+            <div class="action" title="Instagram"><img src="https://img.icons8.com/color/60/instagram-new--v1.png" alt="Instagram"><span>Instagram</span></div>
+            <div class="action" title="More"><img src="https://img.icons8.com/ios-glyphs/60/more.png" alt="More"><span>More</span></div>
+          </div>
+        </div>
+      </div><!-- /pnl-scene -->
     </div>
   </div>
-</header>
+  <!-- =================== / SHARE MODAL =================== -->
 
-<main>
-  <section class="hero">
-    <h2 id="heroTitle">Price Analysis using Candlesticks, Indicators, and Trend Lines</h2>
-    <div class="meta" id="heroMeta">
-      <span><i class="fa-regular fa-clock icon"></i>Reading time ~18–22 min</span>
-      <span><i class="fa-solid fa-signal icon"></i>Focus: RSI, MACD, Bollinger Bands</span>
-      <span><i class="fa-solid fa-shield-halved icon"></i>Risk-first: stops & invalidation</span>
-    </div>
-    <div class="hr"></div>
-    <p id="heroIntro"></p>
-    <div class="foot" id="disclaimer"></div>
-  </section>
+  <script>
+    /* ===== Segmented control ===== */
+    (function(){
+      const wrap = document.querySelector('.app .top-toggle');
+      const btns  = [...wrap.querySelectorAll('.toggle-btn')];
+      const thumb = wrap.querySelector('.seg-thumb');
+      const setActive = (i) => { btns.forEach((b,idx)=> b.classList.toggle('active', idx===i)); thumb.style.transform = `translateX(${i*100}%)`; };
+      setActive(0); btns.forEach((b,i)=> b.addEventListener('click',()=>setActive(i)));
+    })();
 
-  <div class="grid" id="content">
-    <!-- JS will render all section cards here -->
-  </div>
-</main>
+    /* ===== Layout sizing ===== */
+    function sizeFeed(){
+      const feed = document.getElementById('feed');
+      const stickyBar = document.getElementById('stickyBar');
+      const bottomNav = document.getElementById('bottomNav');
+      const topStack  = document.getElementById('topStack');
+      if(!feed || !stickyBar || !bottomNav || !topStack) return;
+      const topOffset = Math.ceil(topStack.getBoundingClientRect().height + 8);
+      stickyBar.style.top = topOffset + 'px';
+      const barH = stickyBar.getBoundingClientRect().height || 40;
+      const bottomH = bottomNav.getBoundingClientRect().height || 56;
+      const available = window.innerHeight - (topOffset + barH) - bottomH - 12;
+      feed.style.height = Math.max(120, available) + 'px';
+      feed.style.maxHeight = feed.style.height;
+    }
+    window.addEventListener('resize', sizeFeed);
+    document.addEventListener('DOMContentLoaded', sizeFeed);
 
-<div id="toast"></div>
+    /* ===== Top panel utils ===== */
+    const fmtMoney = (n) =>
+      "$" + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtPct = (n) => (n >= 0 ? "+" : "") + n.toFixed(2) + "%";
 
-<script>
-/* ============================================================
-   i18n content: English (en), Sinhala (si), Tamil (ta)
-   Only these three switch the full text. Others show as options.
-   ============================================================ */
+    const amountEl = document.getElementById("amount");
+    const walletEl = document.getElementById("walletValue");
+    const unrealEl = document.getElementById("unrealizedValue");
+    const realizedSpan = document.getElementById("realizedSpan");
+    const eye = document.getElementById("eyeToggle");
 
-const translations = {
-  en: {
-    headTitle: "Technical Analysis — Candlesticks • Indicators • Trend Lines",
-    langLabel: "Language",
-    heroTitle: "Price Analysis using Candlesticks, Indicators, and Trend Lines",
-    heroIntro: `
-      Technical Analysis (TA) studies market behavior through price and volume to make
-      probabilistic decisions. In crypto—fast, 24/7, and sentiment-driven—TA helps you
-      turn raw candles into structured plans. This guide walks you through <b>candlesticks</b>
-      and key <b>patterns</b>, core <b>indicators</b> (RSI, MACD, Bollinger Bands), how to draw
-      <b>trend lines</b>, and how to map <b>support/resistance</b> zones. You’ll also learn confluence,
-      multi-timeframe flows, and risk control so your strategy is repeatable—not lucky.
-    `,
-    disclaimer: `
-      <span class="tag">Not financial advice</span>
-      Markets are risky and past performance doesn’t guarantee future results.
-      Always use a stop, define invalidation, and size positions responsibly.
-    `,
-    sections: [
-      {
-        title: "1) Candlestick Basics",
-        body: `
-          <p>Candles compress trading into four numbers: <b>open</b>, <b>high</b>, <b>low</b>, <b>close</b> (OHLC).
-          The body shows open→close, and wicks show extremes. A green candle closes higher than it opens; a red candle closes lower.
-          On higher timeframes (HTF) like 1D and 1W, each candle aggregates a lot of trading—so signals usually carry more weight.</p>
+    let showTop = true;
+    let realizedTodayUSD = 0;
+    let realizedTodayPct = 0;
+    let walletBalance = 0;
+    let unrealizedSum = 0;
 
-          <ul class="list">
-            <li><b>Context first:</b> the same candle means different things in a trend vs. in a range.</li>
-            <li><b>Three Cs:</b> <i>Context, Confirmation, Confluence.</i> Never trade a single candle in isolation.</li>
-            <li><b>Close matters:</b> HTF close often “decides” whether a level truly broke or just wicked through.</li>
-          </ul>
-        `
-      },
-      {
-        title: "2) High-Value Candlestick Patterns",
-        body: `
-          <p>Patterns are clues, not promises. The best ones appear where they <i>should</i>: at fresh levels, after clear trends,
-          with volume support, and alongside indicator confluence.</p>
+    function refreshTop(){
+      amountEl.textContent   = showTop ? fmtMoney(walletBalance + unrealizedSum) : "•••••••";
+      walletEl.textContent   = showTop ? fmtMoney(walletBalance) : "•••••••";
+      unrealEl.textContent   = showTop ? fmtMoney(unrealizedSum) : "•••••••";
+      realizedSpan.textContent = showTop ? `${fmtMoney(realizedTodayUSD)} (${fmtPct(realizedTodayPct)})` : "•••••••";
+    }
+    eye.addEventListener("click", ()=>{ showTop = !showTop; eye.classList.toggle("fa-eye-slash", !showTop); eye.classList.toggle("fa-eye", showTop); refreshTop(); });
 
-          <p><b>Engulfing (Bullish/Bearish):</b> A candle closes beyond the prior candle’s body, “engulfing” it. After a pullback into support, a bullish engulfing suggests buyers seized control. In a down-trend at resistance, a bearish engulfing can signal continuation lower.</p>
+    /* ===== Helper fns ===== */
+    const numberWithCommas = (x) => String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const toFixedSafe = (n, dp) => { const num = Number(n); if (!Number.isFinite(num)) return (0).toFixed(dp); const m = Math.pow(10, dp); return (Math.round(num * m) / m).toFixed(dp); };
+    const dpFromTick = (tickStr) => { const idx = (tickStr || '').indexOf('.'); if (idx === -1) return 0; return tickStr.length - idx - 1; };
+    const quantizeToTick = (price, tickSize) => { const step = parseFloat(tickSize); if (!isFinite(price) || !isFinite(step) || step <= 0) return price; return Math.round(price / step) * step; };
+    const quantizeDownToStep = (qty, stepSize) => { const step = parseFloat(stepSize); if (!isFinite(qty) || !isFinite(step) || step <= 0) return qty; return Math.floor(qty / step) * step; };
+    function joinIntDec(i, d) { const I = numberWithCommas(i); return d !== undefined ? I + '.' + d : I; }
+    function shuffle(arr){ for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j]]; } return arr; }
+    const randInt = (min, max) => Math.floor(Math.random()*(max-min+1))+min;
 
-          <p><b>Doji / Spinning Top:</b> Small body, long wicks → indecision. Powerful when it rejects a key level or appears in a cluster near support/resistance prior to a break.</p>
+    function formatProfit(_sym, x) {
+      const s = toFixedSafe(x, 2);
+      const [i, d] = s.split('.');
+      return joinIntDec(i, d);
+    }
+    function formatSignedProfit(sym, x){
+      const abs = Math.abs(Number(x) || 0);
+      return (x >= 0 ? '+' : '-') + formatProfit(sym, abs);
+    }
+    function formatTwoDP(x) { const s = toFixedSafe(x, 2); const [i, d] = s.split('.'); return joinIntDec(i, d); }
 
-          <p><b>Hammer / Shooting Star:</b> Long lower wick (hammer) after a decline hints at demand stepping in; long upper wick (shooting star) after a rally hints at supply. Reliability grows on HTF and when the wick taps a known level or trend line.</p>
+    /* ====== photo-slot logic ====== */
+    const SLOT_KEY_PREFIX = 'photo_slot_';
+    const DEFAULT_URLS = {
+      'top-reward':   'https://iili.io/KngDpJn.th.jpg',
+      'top-convert':  'https://iili.io/KnrIabj.th.jpg',
+      'top-statement':'https://iili.io/KnrTeyu.th.jpg',
+      'nav-home':    'https://iili.io/Knrf9eV.th.jpg',
+      'nav-markets': 'https://iili.io/KnrA1s4.th.jpg',
+      'nav-trade':   'https://iili.io/KnragO7.th.jpg',
+      'nav-futures': 'https://iili.io/Knrla3v.th.jpg',
+      'nav-assets':  'https://iili.io/Knr1Jse.th.jpg'
+    };
+    function loadSlot(id){ try { return localStorage.getItem(SLOT_KEY_PREFIX + id) || ''; } catch { return ''; } }
+    function saveSlot(id, dataURL){ try { localStorage.setItem(SLOT_KEY_PREFIX + id, dataURL); } catch {} }
+    function initPhotoSlots(){
+      document.querySelectorAll('.photo-slot').forEach(slot=>{
+        const key = slot.dataset.slot;
+        const img = slot.querySelector('img');
+        const input = slot.querySelector('input[type="file"]');
+        const saved = loadSlot(key);
+        if (saved) {
+          img.src = saved;
+          slot.classList.remove('photo-empty');
+        } else if (DEFAULT_URLS[key]) {
+          img.src = DEFAULT_URLS[key];
+          slot.classList.remove('photo-empty');
+        }
+        input.addEventListener('change', (e)=>{
+          const file = e.target.files && e.target.files[0];
+          if(!file) return;
+          const ok = /jpe?g$/i.test(file.name) || file.type === 'image/jpeg';
+          if(!ok){ alert('Please upload a JPG (.jpg or .jpeg)'); e.target.value=''; return; }
+          const reader = new FileReader();
+          reader.onload = () => {
+            img.src = reader.result;
+            slot.classList.remove('photo-empty');
+            saveSlot(key, reader.result);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+    }
 
-          <p><b>Morning/Evening Star:</b> Three-candle reversals showing a transfer of control from sellers→buyers (morning) or buyers→sellers (evening). Look for follow-through and volume confirmation.</p>
+    /* ===== Exchange / calculations / WS / panels ===== */
+    const round2 = (x) => Math.round((Number(x)||0) * 100) / 100;
 
-          <p><b>Inside Bar:</b> Consolidation inside the previous candle’s range. Breaks of the mother bar often give clean momentum trades—best when aligned with the dominant trend.</p>
+    /*** >>> FIXED MARGIN BALANCE TARGET <<< ***/
+    const TARGET_MARGIN_BALANCE = 846591.62; // EXACT Main (Margin) Balance required
 
-          <div class="callout">
-            <i class="fa-solid fa-lightbulb icon"></i>
-            Tip: Patterns at <b>fresh</b> levels beat patterns at “tired” levels that price has chopped through many times.
+    /*** >>> PERSISTENCE KEYS <<< ***/
+    const STORAGE_TRADES_KEY = 'fa_trades_v2';
+    const STORAGE_LOSS_FLAG = 'fa_small_losses_applied_v2';
+
+    function saveTrades(){
+      const data = trades.map(t => ({
+        sym: t.sym,
+        leverage: t.leverage,
+        entry: t.entry,
+        usedMargin: t.usedMargin,
+        effMargin: t.effMargin,
+        mmr: t.mmr,
+        qty: t.qty,
+        side: t.side,
+        marginMode: t.marginMode
+      }));
+      try { localStorage.setItem(STORAGE_TRADES_KEY, JSON.stringify(data)); } catch {}
+    }
+    function loadTrades(){
+      try {
+        const raw = localStorage.getItem(STORAGE_TRADES_KEY);
+        if(!raw) return null;
+        const arr = JSON.parse(raw);
+        if(Array.isArray(arr) && arr.length) return arr;
+      } catch {}
+      return null;
+    }
+
+    const marketMeta = Object.create(null);
+    async function loadExchangeMeta() {
+      const url = 'https://fapi.binance.com/fapi/v1/exchangeInfo';
+      try{
+        const res = await fetch(url);
+        const json = await res.json();
+        if (!json || !Array.isArray(json.symbols)) return;
+        for (const s of json.symbols) {
+          const sym = s.symbol;
+          if (allSymbols.indexOf(sym) === -1) continue;
+          let tickSize = '0.01', stepSize = '0.001', minQty = 0;
+          if (Array.isArray(s.filters)) {
+            for (const f of s.filters) {
+              if (f.filterType === 'PRICE_FILTER' && f.tickSize) tickSize = f.tickSize;
+              if ((f.filterType === 'LOT_SIZE' || f.filterType === 'MARKET_LOT_SIZE') && f.stepSize) stepSize = f.stepSize;
+              if ((f.filterType === 'LOT_SIZE' || f.filterType === 'MARKET_LOT_SIZE') && f.minQty) minQty = parseFloat(f.minQty) || 0;
+            }
+          }
+          marketMeta[sym] = { tickSize, stepSize, minQty, priceDp: dpFromTick(tickSize) };
+        }
+      }catch(e){ }
+    }
+    const getMeta = (sym) => marketMeta[sym] || { tickSize: '0.01', stepSize: '0.001', minQty: 0, priceDp: 2 };
+    function formatPrice(sym, x) { const m = getMeta(sym); const q = quantizeToTick(x, m.tickSize); const s = toFixedSafe(q, m.priceDp); const [i, d] = s.split('.'); return joinIntDec(i, d); }
+
+    const primeSymbols = ['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','DOGEUSDT','TONUSDT','ADAUSDT','AVAXUSDT','TRXUSDT','LINKUSDT','DOTUSDT','NEARUSDT','OPUSDT','ARBUSDT','APTUSDT','INJUSDT','RNDRUSDT','SEIUSDT','TIAUSDT','ONDOUSDT'];
+    const seedSymbols = ['BTCUSDT','ETHUSDT','BNBUSDT','ADAUSDT','SOLUSDT','XRPUSDT','DOTUSDT','LTCUSDT','LINKUSDT','DOGEUSDT','AAVEUSDT','SUSHIUSDT','SHIBUSDT','COMPUSDT','ETCUSDT','ZECUSDT','XMRUSDT','LRCUSDT','QNTUSDT','CRVUSDT','UNIUSDT','BCHUSDT','XLMUSDT','ATOMUSDT','MATICUSDT','AVAXUSDT','TRXUSDT','EOSUSDT','NEARUSDT','FILUSDT','OPUSDT','ARBUSDT','APTUSDT','SUIUSDT','INJUSDT','RNDRUSDT','GALAUSDT','THETAUSDT','SANDUSDT','MANAUSDT','AXSUSDT','CFXUSDT','ICPUSDT','LDOUSDT','PEPEUSDT','FLOKIUSDT','WIFUSDT','ARKUSDT','IOTAUSDT','KASUSDT','PYTHUSDT','STRKUSDT','JUPUSDT','APEUSDT','BLURUSDT','SEIUSDT','TIAUSDT','TONUSDT','ONDOUSDT'];
+    const allSymbols = Array.from(new Set([...primeSymbols, ...seedSymbols]));
+
+    const maintenanceMarginRates = { BTCUSDT:0.004, ETHUSDT:0.005, BNBUSDT:0.005, ADAUSDT:0.010, SOLUSDT:0.008, XRPUSDT:0.010, DOTUSDT:0.010, LTCUSDT:0.010, LINKUSDT:0.010, DOGEUSDT:0.012, AAVEUSDT:0.010, SUSHIUSDT:0.015, SHIBUSDT:0.020, COMPUSDT:0.010, ETCUSDT:0.010, ZECUSDT:0.015, XMRUSDT:0.020, LRCUSDT:0.020, QNTUSDT:0.015, CRVUSDT:0.020, UNIUSDT:0.010, BCHUSDT:0.010, XLMUSDT:0.015, ATOMUSDT:0.010, MATICUSDT:0.010, AVAXUSDT:0.010, TRXUSDT:0.020, EOSUSDT:0.015, NEARUSDT:0.020, FILUSDT:0.015, OPUSDT:0.015, ARBUSDT:0.020, APTUSDT:0.015, SUIUSDT:0.020, INJUSDT:0.015, RNDRUSDT:0.015, GALAUSDT:0.025, THETAUSDT:0.020, SANDUSDT:0.020, MANAUSDT:0.020, AXSUSDT:0.020, CFXUSDT:0.025, ICPUSDT:0.015, LDOUSDT:0.020, PEPEUSDT:0.030, FLOKIUSDT:0.030, WIFUSDT:0.030, ARKUSDT:0.020, IOTAUSDT:0.020, KASUSDT:0.025, PYTHUSDT:0.020, STRKUSDT:0.020, JUPUSDT:0.020, APEUSDT:0.020, BLURUSDT:0.020, SEIUSDT:0.020, TIAUSDT:0.020, TONUSDT:0.015, ONDOUSDT:0.020 };
+    const getMaintRate = (sym) => maintenanceMarginRates[sym] ?? 0.01;
+
+    const qtyFrom = (marginUsed, leverage, entry) => (leverage * marginUsed) / entry;
+    const upnlLong  = (mark, entry, qty) => (mark - entry) * qty;
+    const upnlShort = (mark, entry, qty) => (entry - mark) * qty;
+    const roiPct = (pnl, usedMargin) => (pnl / usedMargin) * 100;
+    const maintenance = (mmr, mark, qty) => mmr * mark * qty;
+    const marginBalanceCalc = (effectiveMargin, uPnL) => effectiveMargin + uPnL;
+
+    function liqPriceLong(entry, leverage, mmr, marginUsed, effectiveMargin) {
+      const Q = (leverage * marginUsed) / entry;
+      const denom = Q * (1 - mmr);
+      const num = Q * entry - effectiveMargin;
+      if (denom <= 0) return null; const P = num / denom;
+      if (!isFinite(P) || P <= 0) return null; return P;
+    }
+    function liqPriceShort(entry, leverage, mmr, marginUsed, effectiveMargin) {
+      const Q = (leverage * marginUsed) / entry;
+      const denom = Q * (1 + mmr);
+      const num = effectiveMargin + Q * entry;
+      if (denom <= 0) return null; const P = num / denom;
+      if (!isFinite(P) || P <= 0) return null; return P;
+    }
+    const marginRatioPct = (maint, mBal) => { const mb = Number(mBal); if (!isFinite(mb) || mb <= 0) return 100; const r = (maint / mb) * 100; return Math.max(0, Math.min(9999, r)); };
+
+    const feedDiv = document.getElementById('feed');
+    function meterBars(){ const totalBars = 4; const greenBars = Math.floor(Math.random() * totalBars) + 1; let html=''; for(let j=0;j<totalBars;j++) html += `<span class="${j<greenBars?'green':''}"></span>`; return html; }
+
+    function createPanel({ sym, leverage, entry, mark, usedMargin, effMargin, mmr, qty, side, marginMode }) {
+      const pnl = side === 'LONG' ? upnlLong(mark, entry, qty) : upnlShort(mark, entry, qty);
+      const roi = roiPct(pnl, usedMargin);
+      const maint = maintenance(mmr, mark, qty);
+      const mBal = marginBalanceCalc(effMargin, pnl);
+      const mRatio = marginRatioPct(maint, mBal);
+      const liq = side === 'LONG' ? liqPriceLong(entry, leverage, mmr, usedMargin, effMargin) : liqPriceShort(entry, leverage, mmr, usedMargin, effMargin);
+      const sideIcon = side === 'LONG' ? '<span class="icon-buy">B</span>' : '<span class="icon-sell">S</span>';
+      const sizeUSDT = mark * qty;
+      const panel = document.createElement('div');
+      panel.className = 'trade-panel';
+      panel.innerHTML = `
+        <div class="header">
+          ${sideIcon}
+          <span class="symbol">${sym}</span>
+          <span class="tag">PERP</span>
+          <span class="tag">${marginMode} ${leverage}×</span>
+          <span class="exclamations">${meterBars()}</span>
+          <i class="fas fa-share-nodes share" title="Share PNL"></i>
+        </div>
+        <div class="content-columns">
+          <div class="column">
+            <div class="stat">
+              <div class="label">PNL (USDT)</div>
+              <div class="value pnl ${pnl < 0 ? 'red' : 'green'}">${formatSignedProfit(sym, pnl)}</div>
+            </div>
+            <div class="stat">
+              <div class="label">Size (USDT)</div>
+              <div class="value size">${formatTwoDP(sizeUSDT)}</div>
+            </div>
+            <div class="stat">
+              <div class="label">Entry Price (USDT)</div>
+              <div class="value entry">${formatPrice(sym, entry)}</div>
+            </div>
           </div>
-        `
-      },
-      {
-        title: "3) Core Indicators: RSI, MACD, Bollinger Bands",
-        body: `
-          <p><b>RSI (Relative Strength Index)</b> measures the speed of gains vs. losses. Default setting is <b>14</b>. Classic zones:
-          70–80 = overbought; 20–30 = oversold. In strong uptrends, RSI often <i>stays</i> above 40–50; in downtrends it often fails below 50.
-          Watch for <b>divergence</b> (price higher high but RSI lower high = bearish; price lower low but RSI higher low = bullish).</p>
-
-          <ul class="list">
-            <li><b>Momentum regime:</b> In bull phases, RSI pullbacks to 40–50 often mark continuation entries.</li>
-            <li><b>Hidden divergence:</b> In trends, hidden divergence can signal trend continuation after pullbacks.</li>
-            <li><b>Multi-TF:</b> HTF RSI crossing 50 adds weight to LTF setups.</li>
-          </ul>
-
-          <p><b>MACD</b> uses EMAs (12/26) and a signal line (9). Crosses above the signal can mark bullish momentum;
-          below marks bearish. The histogram visualizes the difference: rising histo = strengthening momentum; falling = weakening.
-          Best used to confirm trend changes or add confluence to breaks and retests.</p>
-
-          <p><b>Bollinger Bands (BB)</b> = middle band (20-SMA) plus/minus 2 standard deviations by default. Key behaviors:
-          <b>Squeeze</b> (bands contract) → volatility likely ahead; <b>Expansion</b> (bands widen) → trend in motion.
-          In trends, price can “walk the band”; counter-trend fades work better in ranges and at HTF levels.</p>
-
-          <div class="callout">
-            <i class="fa-solid fa-sliders icon"></i>
-            Typical crypto settings: RSI <b>14</b>, MACD <b>12-26-9</b>, BB <b>20, 2σ</b>. Adjust only with a reason and keep them consistent to avoid curve-fitting.
+          <div class="column center">
+            <div class="stat">
+              <div class="label no-line">Margin (USDT)</div>
+              <div class="value margin">${formatTwoDP(usedMargin)}</div>
+            </div>
+            <div class="stat">
+              <div class="label no-line">Mark Price (USDT)</div>
+              <div class="value mark">${formatPrice(sym, mark)}</div>
+            </div>
           </div>
-        `
-      },
-      {
-        title: "4) Drawing Clean Trend Lines & Channels",
-        body: `
-          <p>Trend lines connect <b>at least two</b> swing points (ideally three touches to “confirm”). Draw <i>wicks to wicks</i> for extremes,
-          or <i>closes to closes</i> if wicks are noisy—be consistent. Parallel a second line to form a <b>channel</b> for targets and mid-line reactions.</p>
-
-          <ul class="list">
-            <li><b>Respect structure:</b> Don’t force lines to fit your bias. If it needs 10 exceptions, it’s wrong.</li>
-            <li><b>Breaks & retests:</b> A clean break with a <i>retest and hold</i> often provides high-quality entries.</li>
-            <li><b>Confluence:</b> Trend line + HTF level + RSI regime or MACD flip beats any single signal.</li>
-          </ul>
-        `
-      },
-      {
-        title: "5) Support & Resistance (S/R) as Zones",
-        body: `
-          <p>Think in <b>zones</b>, not single lines. Mark areas where price repeatedly flipped from supply to demand (or vice-versa).
-          HTF zones (1D/1W) matter most. Inside ranges, the midline (50% of the range) often acts as a magnet.</p>
-
-          <ul class="list">
-            <li><b>Freshness:</b> Levels untested in a long time are more potent than levels hit 5 times this week.</li>
-            <li><b>Role flip:</b> Broken resistance can turn to support on retest; broken support can become resistance.</li>
-            <li><b>Wick vs. close:</b> HTF closes above/below levels carry authority; stray wicks can be traps.</li>
-          </ul>
-        `
-      },
-      {
-        title: "6) Multi-Timeframe Flow & Confluence",
-        body: `
-          <p>Top-down works: set bias on HTF (1D/1W), find structure on 4H/1H, execute on 15m/5m.
-          If HTF is bullish (higher-highs/higher-lows), favor long setups on LTF; if bearish, favor shorts.
-          Add indicators as <b>confirmation</b>—not as permission.</p>
-
-          <div class="callout">
-            <i class="fa-solid fa-layer-group icon"></i>
-            Example flow: 1) Weekly breaks and closes above resistance → bias up.
-            2) Daily pullback to prior resistance (now support) with hammer + RSI 45–55 hold.
-            3) 1H shows bullish engulfing + MACD cross → enter; stop below the zone.
+          <div class="column right">
+            <div class="stat">
+              <div class="label">ROI</div>
+              <div class="value percent roi ${roi < 0 ? 'red' : 'green'}">${(roi >= 0 ? '+' : '') + toFixedSafe(roi, 2)}%</div>
+            </div>
+            <div class="stat margin-ratio">
+              <div class="label">Margin Ratio</div>
+              <div class="value percent margin-ratio-value ${mRatio >= 80 ? 'red' : 'green'}">${toFixedSafe(mRatio, 2)}%</div>
+            </div>
+            <div class="stat">
+              <div class="label no-line">Liq. Price (USDT)</div>
+              <div class="value liq">${liq === null ? '—' : formatPrice(sym, liq)}</div>
+            </div>
           </div>
-        `
-      },
-      {
-        title: "7) Risk Management & Invalidation",
-        body: `
-          <p>Good analysis fails without risk control. Define <b>invalidation</b> (the price at which your idea is wrong) <i>before</i> you enter.
-          Place the stop where the setup breaks (not where it “feels” comfortable). Size the position so a loss is acceptable (e.g., 0.5%–2% account risk).</p>
+        </div>
+        <div class="tp-actions">
+          <button class="tp-btn">Leverage</button>
+          <button class="tp-btn">TP/SL</button>
+          <button class="tp-btn">Close</button>
+          <button class="tp-btn">Reverse</button>
+        </div>`;
+      const panelState = { node: panel, sym, leverage, mmr, entry, usedMargin, effMargin, qty, mark, side, marginMode, lockLoss:false };
+      panel.querySelector('.share').addEventListener('click', ()=> openPNLModal(panelState));
+      return panelState;
+    }
 
-          <ul class="list">
-            <li><b>R:R thinking:</b> Aim for at least 1:1.5 to 1:3. Many small, controlled losses; fewer, larger wins.</li>
-            <li><b>Partial takes:</b> Take profit at first trouble area (FTA); move stop to breakeven only with structure-based reasons.</li>
-            <li><b>Avoid revenge:</b> Your next trade shouldn’t “fix” the previous one. Follow the plan or don’t trade.</li>
-          </ul>
+    function renderTrade(t) {
+      const pnl = (t.side === 'LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
+      const roi = roiPct(pnl, t.usedMargin);
+      const maintV = maintenance(t.mmr, t.mark, t.qty);
+      const mBal = marginBalanceCalc(t.effMargin, pnl);
+      const mRatio = marginRatioPct(maintV, mBal);
+      const liq = (t.side === 'LONG') ? liqPriceLong(t.entry, t.leverage, t.mmr, t.usedMargin, t.effMargin) : liqPriceShort(t.entry, t.leverage, t.mmr, t.usedMargin, t.effMargin);
+      const pnlEl = t.node.querySelector('.value.pnl'); pnlEl.textContent = formatSignedProfit(t.sym, pnl); pnlEl.classList.toggle('green', pnl >= 0); pnlEl.classList.toggle('red', pnl < 0);
+      t.node.querySelector('.value.mark').textContent = formatPrice(t.sym, t.mark);
+      const sizeEl = t.node.querySelector('.value.size'); sizeEl.textContent = formatTwoDP(t.mark * t.qty);
+      const roiEl = t.node.querySelector('.value.roi'); roiEl.textContent = (roi >= 0 ? '+' : '') + toFixedSafe(roi, 2) + '%'; roiEl.classList.toggle('green', roi >= 0); roiEl.classList.toggle('red', roi < 0);
+      const mrEl = t.node.querySelector('.value.margin-ratio-value'); mrEl.textContent = toFixedSafe(mRatio, 2) + '%'; mrEl.classList.toggle('green', mRatio < 80); mrEl.classList.toggle('red', mRatio >= 80);
+      const liqEl = t.node.querySelector('.value.liq'); liqEl.textContent = (liq === null) ? '—' : formatPrice(t.sym, liq);
 
-          <div class="warn">
-            <i class="fa-solid fa-triangle-exclamation icon"></i>
-            Leverage amplifies both mistakes and skills. If your invalidation is wide, reduce size; if it’s tight, expect more stopouts.
-          </div>
-        `
-      },
-      {
-        title: "8) Putting It Together — A Simple Checklist",
-        body: `
-          <p>Before clicking buy/sell, run this quick pre-flight:</p>
-          <ul class="list">
-            <li>What’s the <b>HTF bias</b>? Trend or range?</li>
-            <li>Where are <b>fresh S/R zones</b>? Any clean <b>trend line/channel</b> nearby?</li>
-            <li>Do I have <b>confluence</b>: pattern + indicator + level?</li>
-            <li>Where’s my <b>invalidation</b> and <b>target</b>? What’s the <b>R:R</b>?</li>
-            <li>What would make me <b>not</b> take this trade? (No trade is a position.)</li>
-          </ul>
-          <p>Repeatable process beats prediction. Treat this like engineering: same inputs, same steps, measured outputs.</p>
-        `
-      },
-      {
-        title: "9) Common Mistakes (and Fixes)",
-        body: `
-          <ul class="list">
-            <li><b>Chasing breakouts:</b> Wait for a retest or LTF structure to join, unless you accept wider risk.</li>
-            <li><b>Indicator overload:</b> One momentum + one volatility + structure is usually enough.</li>
-            <li><b>Ignoring HTF:</b> LTF signals into HTF resistance are low-probability.</li>
-            <li><b>Moving stops:</b> Only move with a structural reason (e.g., HL formed, channel held).</li>
-            <li><b>Sample bias:</b> Backtest across many markets/periods; don’t cherry-pick winners.</li>
-          </ul>
-          <p class="foot">Save snapshots of good/bad trades with notes. Your own data is the best teacher.</p>
-        `
+      if (currentSharedTrade === t) updatePNLCardFromTrade(t, /*silent*/true);
+    }
+
+    function sixMonthsAgoMs(){ const d=new Date(); d.setMonth(d.getMonth()-6); d.setHours(0,0,0,0); return d.getTime(); }
+    async function fetchSixMonthMarkClose(sym, startMs){
+      try{ const url1=`https://fapi.binance.com/fapi/v1/markPriceKlines?symbol=${sym}&interval=1d&startTime=${startMs-2*24*3600*1000}&limit=2`;
+        const res1=await fetch(url1); if(res1.ok){ const data=await res1.json(); if(Array.isArray(data)&&data.length>0){ const k=data[0]; const close=parseFloat(k[4]); if(isFinite(close)) return close; } } }catch{}
+      try{ const url2=`https://fapi.binance.com/fapi/v1/continuousKlines?pair=${sym}&contractType=PERPETUAL&interval=1d&startTime=${startMs-2*24*3600*1000}&limit=2`;
+        const res2=await fetch(url2); if(res2.ok){ const data=await res2.json(); if(Array.isArray(data)&&data.length>0){ const k=data[0]; const close=parseFloat(k[4]); if(isFinite(close)) return close; } } }catch{}
+      try{ const url3=`https://fapi.binance.com/fapi/v1/klines?symbol=${sym}&interval=1d&startTime=${startMs-2*24*3600*1000}&limit=2`;
+        const res3=await fetch(url3); if(res3.ok){ const data=await res3.json(); if(Array.isArray(data)&&data.length>0){ const k=data[0]; const close=parseFloat(k[4]); if(isFinite(close)) return close; } } }catch{}
+      return null;
+    }
+    async function loadSixMonthEntryMap(symbolList){
+      const start=sixMonthsAgoMs(); const entryMap=Object.create(null); const unique=[...new Set(symbolList)]; const batch=8;
+      for(let i=0;i<unique.length;i+=batch){ const chunk=unique.slice(i,i+batch);
+        await Promise.all(chunk.map(async (sym)=>{ const close=await fetchSixMonthMarkClose(sym,start); if(isFinite(close)) entryMap[sym]=close; })); }
+      return entryMap;
+    }
+
+    const trades=[]; let symbols=shuffle(allSymbols.slice()); const tradeCount=60;
+    function shuffleFeed(){ const nodes=Array.from(feedDiv.children); nodes.filter(n=>n.id!=='emptyState').forEach(n=>feedDiv.appendChild(n)); }
+
+    async function seedWithFuturesMark6M(){
+      const empty=document.getElementById("emptyState"); if(empty) empty.remove();
+      await loadExchangeMeta();
+
+      const res=await fetch('https://fapi.binance.com/fapi/v1/premiumIndex'); const arr=await res.json();
+      const markMap=Object.create(null); arr.forEach(o=>{ if(o&&o.symbol) markMap[o.symbol]=parseFloat(o.markPrice); });
+
+      const saved = loadTrades();
+      if (saved && saved.length){
+        for (const s of saved){
+          if(!marketMeta[s.sym] || !isFinite(markMap[s.sym])) continue;
+          const panelState = createPanel({
+            sym: s.sym,
+            leverage: s.leverage,
+            entry: s.entry,
+            mark: markMap[s.sym],
+            usedMargin: s.usedMargin,
+            effMargin: s.effMargin,
+            mmr: s.mmr ?? getMaintRate(s.sym),
+            qty: s.qty,
+            side: s.side,
+            marginMode: s.marginMode || 'Cross'
+          });
+          trades.push(panelState);
+          feedDiv.appendChild(panelState.node);
+        }
+        shuffleFeed(); sizeFeed();
+        return;
       }
-    ],
-    footerNote: `
-      Built as an educational overview for crypto/FX/indices. For best results, combine with journaling,
-      HTF first, and strict risk control.
-    `
-  },
 
-  /* ==================== SINHALA ==================== */
-  si: {
-    headTitle: "තාක්ෂණික විශ්ලේෂණය — Candlesticks • Indicators • Trend Lines",
-    langLabel: "භාෂාව",
-    heroTitle: "Candlesticks, Indicators සහ Trend Lines භාවිතයෙන් මිල විශ්ලේෂණය",
-    heroIntro: `
-      තාක්ෂණික විශ්ලේෂණය (TA) කියන්නේ මිල/ප්‍රමාණ දත්ත ආශ්‍රිතව <b>සම්භාව්‍ය</b> තීරණ ගන්නා ක්‍රමවේදයක්.
-      24/7 ක්‍රිප්ටෝ වෙළඳපොළේ වේගවත් සංවේදී ගමන් අතර TA ඔබට කෑන්ඩල් දත්ත වලින් සැලසුම් සකස් කරගන්න
-      උපකාර කරයි. මෙහිදී <b>කෑන්ඩල් මූලිකතා</b>, ප්‍රමුඛ <b>patterns</b>, <b>RSI / MACD / Bollinger Bands</b>,
-      <b>trend lines</b> ඇඳීම, <b>support/resistance</b> කලාප සැලකීම, multi-timeframe flow සහ
-      <b>risk management</b> පිළිබඳ පැහැදිලි ගමන් මඟක් දෙනවා.
-    `,
-    disclaimer: `
-      <span class="tag">මෙය ආදේශක වාර්තාවක් නොවේ</span>
-      වෙළඳපොළේ අවදානම වැඩි. Stop-loss/invalidations නිර්වචනයාත්මකව භාවිතා කර ප්‍රමාණිත තීරණ ගන්න.
-    `,
-    sections: [
-      {
-        title: "1) Candlestick මූලිකතා",
-        body: `
-          <p>එක් කෑන්ඩලයකින් <b>Open, High, Low, Close</b> (OHLC) අගයන් නිරූපණය කරයි.
-          බොඩිය Open→Close ගමන් පෙන්වයි, wicks උපරිම/අවම. දීර්ඝ කාල පරിധි (1D/1W) මත සලකන සංඛේත
-          ඉතා බලවත්.</p>
-          <ul class="list">
-            <li><b>Context:</b> Trend එකක vs Range එකක තිබෙන කෑන්ඩල් එකක අර්ථය වෙනස්.</li>
-            <li><b>Three C:</b> <i>Context, Confirmation, Confluence.</i> එක කෑන්ඩල් එකක් විශ්වාස නොකරන්න.</li>
-            <li><b>Close:</b> HTF close එක හරහාම බිඳැහීම/ප්‍රතික්ෂේපය තීරණය වෙන්නෙ බොහෝවිට මෙතැන.</li>
-          </ul>
-        `
-      },
-      {
-        title: "2) වටිනා Candlestick Patterns",
-        body: `
-          <p>Patterns කියන්නේ <i>ඉඟි</i>. හොඳම තැන වන්නේ <b>නව</b> මට්ටම්, පැහැදිලි trends, සහ
-          volume/indicator confluence තියෙන අවස්ථා.</p>
+      symbols = symbols.filter(s=>!!marketMeta[s]);
+      const poolForEntry=Array.from(new Set([...primeSymbols, ...symbols.slice(0, tradeCount*2)]));
+      const entryMap=await loadSixMonthEntryMap(poolForEntry);
 
-          <p><b>Engulfing:</b> මීට පෙර කෑන්ඩලය “දිරාපත්” කරමින් පසුකාලීන කෑන්ඩලය කුඩා බොඩිය මතට/යටට වසාගැනීම.
-          Support එකක දී bullish engulfing → కొనుగోలుකරුවන් පාලනය ගන්නා බවක්.
-          Resistance එකක දී bearish engulfing → පහළට අඛණ්ඩතාව.</p>
+      const MARGIN_MIN=50, MARGIN_MAX=300;
+      const mainList=primeSymbols.filter(s=>marketMeta[s]&&isFinite(markMap[s])&&isFinite(entryMap[s]));
+      const otherList=symbols.filter(s=>!primeSymbols.includes(s)&&marketMeta[s]&&isFinite(markMap[s])&&isFinite(entryMap[s]));
+      const planned=[...mainList, ...otherList].slice(0, tradeCount);
+      const LEV_SET = [10,20,50,100];
 
-          <p><b>Doji / Spinning Top:</b> කුඩා බොඩිය, දිගු wicks → <i>අසර්ථකාමී</i>. මට්ටම්වල රීජෙක්‌ෂන් සමඟින් බලවත්.</p>
+      for(let i=0;i<planned.length;i++){
+        const sym=planned[i];
+        const liveMark=markMap[sym]; if(!isFinite(liveMark)) continue;
+        const sixMEntryRaw=entryMap[sym]; if(!isFinite(sixMEntryRaw)) continue;
 
-          <p><b>Hammer / Shooting Star:</b> පහළ wick දිග (hammer) පසුබෑමකදී demand; ඉහළ wick දිග (shooting star)
-          නැගීම්වලදී supply. HTF+මට්ටම් සමඟ විශ්වාසිත.</p>
+        const leverage = LEV_SET[Math.floor(Math.random()*LEV_SET.length)];
+        const entry=quantizeToTick(sixMEntryRaw, getMeta(sym).tickSize);
+        const side=(liveMark >= entry) ? 'LONG' : 'SHORT';
 
-          <p><b>Morning/Evening Star:</b> තුන් කෑන්ඩල් reversal. Follow-through/volume පරීක්ෂා කරන්න.</p>
+        let usedMargin=(MARGIN_MIN + Math.random()*(MARGIN_MAX - MARGIN_MIN));
 
-          <p><b>Inside Bar:</b> Mother bar එක තුළ එකතු වීම. Trend සමඟ බිඳවැටීම් සාපේක්ෂව පිරිසිදු.</p>
+        const m=getMeta(sym);
+        let qtyRaw=qtyFrom(usedMargin, leverage, entry);
+        let qty=quantizeDownToStep(qtyRaw, m.stepSize);
+        if(qty < m.minQty) qty = m.minQty;
 
-          <div class="callout"><i class="fa-solid fa-lightbulb icon"></i>
-            <b>Fresh</b> මට්ටම්වල patterns > බහු වාර ගැට ගැසුණු “දැල්මට” මට්ටම්වල patterns.
-          </div>
-        `
-      },
-      {
-        title: "3) ප්‍රමුඛ Indicators: RSI, MACD, Bollinger Bands",
-        body: `
-          <p><b>RSI(14)</b> ගැටළු/ලාභ වේගය මනිනුයි. 70–80 overbought, 20–30 oversold. Bull trends වලදී RSI 40–50 අතර
-          රැඳෙමින් තව ඉහළට; bear trends වලදී 50 ට අඩු. <b>Divergence</b> සොයන්න.</p>
+        const marginMode = Math.random() < 0.5 ? 'Cross' : 'Isolated';
+        let effMargin = (marginMode === 'Isolated') ? usedMargin : usedMargin * (1.5 + Math.random() * 2.5);
 
-          <p><b>MACD(12-26-9)</b> signal line ඉක්මවීම/පහළ යාම momentum වෙනස්කම් පෙන්වයි. Histogram ↑ → ශක්තිමත්; ↓ → කම්පනය
-          අවම වෙයි.</p>
+        const panelState = createPanel({
+          sym, leverage, entry, mark: liveMark,
+          usedMargin, effMargin, mmr: getMaintRate(sym), qty, side, marginMode
+        });
 
-          <p><b>Bollinger Bands(20,2σ)</b> — Squeeze → අඩු අනුක්‍රමිකතාවෙන් විශාල චලනයකට පෙර.
-          Expansion → trend දළ වීම. Trend වලදී “walk the band” වීම දක්නට ලැබේ.</p>
-
-          <div class="callout"><i class="fa-solid fa-sliders icon"></i>
-            සාමාන්‍ය සැකසුම්: RSI <b>14</b>, MACD <b>12-26-9</b>, BB <b>20, 2σ</b>. වෙනස් කළහොත් හේතුවක් තියන්න.
-          </div>
-        `
-      },
-      {
-        title: "4) Trend Lines & Channels නිවැරදිව ඇඳීම",
-        body: `
-          <p>අවම වෂින්දු <b>දෙකක්</b> සම්බන්ධ කරන්න (තවත් touch එකක් → තහවුරු). Wicks↔Wicks හෝ Closes↔Closes — එකම
-          ක්‍රමයක් සෑම විටම භාවිතා කරන්න. සමාන්තර රේඛාවක් ඇඳලා <b>channel</b> හදා ගන්න.</p>
-          <ul class="list">
-            <li>Bias එකට ගැළපෙන්න ඇඳන්නේ නැහැ. Structure එක පිළිපදින්න.</li>
-            <li>Break + <i>retest</i> + hold → උසස් ගුණාත්මක ඇතුල් වීම.</li>
-            <li>Trend line + HTF මට්ටම + RSI/MACD confluence → උසස් පිළිගැනීම.</li>
-          </ul>
-        `
-      },
-      {
-        title: "5) Support/Resistance කලාප ලෙස",
-        body: `
-          <p>එක රේඛාවකට වඩා <b>කලාප</b> ලෙස සිතන්න. දෛනික/සතිපතා මට්ටම් වඩා බලවත්. Range තුළ 50% midline එක
-          බහු වාරයක් ආකර්ෂණය කරයි.</p>
-          <ul class="list">
-            <li><b>Freshness:</b> කාලය දිගට අටු නොලැබුණු මට්ටම් > නිතරම testing වුණු මට්ටම්.</li>
-            <li><b>Role flip:</b> Resistance→Support / Support→Resistance.</li>
-            <li><b>Close vs Wick:</b> HTF close තීරණාත්මක; stray wicks trap විය හැක.</li>
-          </ul>
-        `
-      },
-      {
-        title: "6) Multi-Timeframe & Confluence",
-        body: `
-          <p>ඉහළ කාල පරിധියෙන් bias ගන්න; මැද/අඩු කාල පරിധීන්හි entry සොයන්න. Indicators තහවුරු කිරීමට
-          පමණක් භාවිතා කරන්න.</p>
-          <div class="callout"><i class="fa-solid fa-layer-group icon"></i>
-            උදාහරණය: Weekly close එකෙන් resistance ඉහලින් → bias up.
-            Daily pullback support වල hammer + RSI 45–55.
-            1H bullish engulfing + MACD cross → entry; stop support යට.
-          </div>
-        `
-      },
-      {
-        title: "7) අවදානම කළමනාකරණය",
-        body: `
-          <p><b>Invalidation</b> පෙර නිර්වචනය කරගන්න. Stop එක structure බිඳෙන තැන. Trade එකකට ගන්න අවදානම
-          ගිණුමට 0.5%–2% වටා පමණක් තබා ගන්න.</p>
-          <ul class="list">
-            <li>R:R අවම වශයෙන් 1:1.5 ~ 1:3.</li>
-            <li>FTA හි කොටස් ගන්න; stop BE වෙලා යාමකට structure හේතුවක් අවශ්‍යයි.</li>
-            <li>Revenge trading වලට නොයන්න.</li>
-          </ul>
-          <div class="warn"><i class="fa-solid fa-triangle-exclamation icon"></i>
-            Leverage තErrorsත් වර්ධනය කරයි. Stop පුළුල් නම් size අඩුකරන්න.
-          </div>
-        `
-      },
-      {
-        title: "8) සරಳ Checklist එක",
-        body: `
-          <ul class="list">
-            <li>HTF bias කුමක්ද?</li>
-            <li>Fresh S/R + trend line/channel වත්ද?</li>
-            <li>Pattern + Indicator + Level <b>confluence</b> තියෙනවද?</li>
-            <li>Invalidation / targets / R:R?</li>
-            <li>ඇයි <i>නො</i>එන්නෙ? (No-trade ද අර්ථවත් තීරණයක්.)</li>
-          </ul>
-        `
-      },
-      {
-        title: "9) පොදු වැරදි",
-        body: `
-          <ul class="list">
-            <li>Breakouts පැටළීම → Retest හෝ LTF structure බලා ඇතුල් වීම.</li>
-            <li>Indicators අතිරික්ත කිරීම.</li>
-            <li>HTF නොගෞරව කිරීම.</li>
-            <li>Stops මාරු කිරීම structure හේතුවක් නැතුව.</li>
-            <li>Cherry-pick backtests → විවිධ දත්ත කාලයන් පරීක්ෂා කරන්න.</li>
-          </ul>
-        `
+        trades.push(panelState); feedDiv.appendChild(panelState.node);
       }
-    ],
-    footerNote: `අධ්‍යාපනමය අරමුණක් සදහා. ජර්නල් කිරීම, HTF-first, සහ අවදානම පාලනය සමඟ යොදන්න.`
-  },
+      shuffleFeed(); sizeFeed();
 
-  /* ==================== TAMIL ==================== */
-  ta: {
-    headTitle: "தொழில்நுட்ப பகுப்பு — Candlesticks • Indicators • Trend Lines",
-    langLabel: "மொழி",
-    heroTitle: "Candlesticks, Indicators, Trend Lines மூலம் விலைப் பகுப்பாய்வு",
-    heroIntro: `
-      Technical Analysis (TA) என்பது விலை/பரிமாற்ற தரவின் நடத்தை வைத்து <b>சாத்தியக்</b> தீர்மானங்கள் எடுக்கும் முறை.
-      24/7 இயங்கும் கிரிப்டோ சந்தையில், TA மெழுகுவர்த்திகளை திட்டமாக மாற்ற உதவுகிறது.
-      இங்கு <b>candlestick அடிப்படைகள்</b>, முக்கிய <b>patterns</b>, <b>RSI / MACD / Bollinger Bands</b>,
-      <b>trend lines</b>, <b>support/resistance</b> பகுதிகள், multi-timeframe ஓட்டம் மற்றும்
-      <b>risk management</b> ஆகியவற்றை நடைமுறை வழியில் பார்ப்போம்.
-    `,
-    disclaimer: `
-      <span class="tag">இது நிதி ஆலோசனை அல்ல</span>
-      சந்தை அபாயகரம். எப்போதும் stop/invalidations வரையறுத்து அளவான செயலில் ஈடுபடுங்கள்.
-    `,
-    sections: [
-      {
-        title: "1) Candlestick அடிப்படைகள்",
-        body: `
-          <p>ஒரு மெழுகுவர்த்தி <b>Open, High, Low, Close</b> (OHLC) மதிப்புகளை சுருக்குகிறது.
-          உடல் Open→Close, மீசை/விக் அதிக/குறைந்த நிலைகளை காட்டும். HTF (1D/1W) சிக்னல்கள் வலுவானவை.</p>
-          <ul class="list">
-            <li><b>Context:</b> Trend-இலும் Range-இலும் ஒரே candle-க்கு வேறு அர்த்தம்.</li>
-            <li><b>Three C:</b> <i>Context, Confirmation, Confluence</i> — தனித்து candleயை நம்ப வேண்டாம்.</li>
-            <li><b>Close முக்கியம்:</b> HTF close உண்மையான break/reject ஐ உறுதிப்படுத்தும்.</li>
-          </ul>
-        `
-      },
-      {
-        title: "2) முக்கிய Candlestick Patterns",
-        body: `
-          <p>Patterns வாக்குறுதி அல்ல; <i>குறிப்புகள்</i>. புதிய நிலைகள், தெளிவான trend, volume/indicator confluence
-          உள்ள இடங்களில் சிறந்து செயல்படும்.</p>
+      try{
+        if(!localStorage.getItem(STORAGE_LOSS_FLAG)){
+          forceTwoSmallLossesRandom();
+          localStorage.setItem(STORAGE_LOSS_FLAG,'1');
+        }
+      }catch{}
 
-          <p><b>Engulfing:</b> முந்தைய உடலை முழுவதும் மூடுவது. Support பகுதியில் bullish engulfing → வாங்குபவர் கட்டுப்பாடு.
-          Resistance பகுதியில் bearish engulfing → கீழ் தொடர்ச்சி.</p>
+      saveTrades();
+    }
 
-          <p><b>Doji / Spinning Top:</b> சிறிய உடல், நீண்ட விக்குகள் → தயக்கம். நிலைகளில் rejections இருந்தால் வலிமை பெறும்.</p>
-
-          <p><b>Hammer / Shooting Star:</b> கீழ் நீண்ட விக் (hammer) — தேவை; மேல் நீண்ட விக் (shooting star) — வழங்கல்.
-          HTF + நிலைகள் சேரும் போது நம்பத்தகுதி அதிகம்.</p>
-
-          <p><b>Morning/Evening Star</b> மற்றும் <b>Inside Bar</b> — தொடர்ச்சியும் breakout-களும் confluence இருந்தால் சிறப்பு.</p>
-        `
-      },
-      {
-        title: "3) மைய Indicators: RSI, MACD, Bollinger Bands",
-        body: `
-          <p><b>RSI(14)</b> வேகத்தை அளக்கும். 70–80 overbought; 20–30 oversold. Bull-இல் RSI 40–50 மேல் தங்கும்; bear-இல் 50 கீழ் தோல்வி அடையும்.
-          <b>Divergence</b> (HH vs LH / LL vs HL) கவனியுங்கள்.</p>
-
-          <p><b>MACD(12-26-9)</b> signal line கடக்கும்போது momentum மாற்றம். Histogram உயர்வு → வலிமை; குறைவு → பலவீனம்.</p>
-
-          <p><b>Bollinger Bands(20,2σ)</b> — Squeeze → பின்னர் பெரும் மாற்றம் வாய்ப்பு; Expansion → ஓடும் trend.
-          Trend-இல் “walk the band” நடக்கும்; range-இல் mean-revert.</p>
-        `
-      },
-      {
-        title: "4) Trend Lines & Channels வரைவது",
-        body: `
-          <p>குறைந்தது <b>இரண்டு</b> swing புள்ளிகளை இணைக்கவும் (மூன்றாவது தொடுதல் → உறுதி).
-          Wicks↔Wicks அல்லது Closes↔Closes — ஒன்றைத் தேர்ந்து தொடர்ச்சியாக பயன்படுத்தவும்.
-          இணை கோடு போட்டு <b>channel</b> உருவாக்கவும்.</p>
-        `
-      },
-      {
-        title: "5) Support/Resistance — பகுதிகள்",
-        body: `
-          <p>ஒரே கோடு அல்ல, <b>பகுதிகள்</b> போல யோசியுங்கள். HTF(1D/1W) பகுதிகள் வலிமையானவை. Range நடுவண் 50% அடிக்கடி காந்தம் போல செயல்படும்.</p>
-          <ul class="list">
-            <li><b>Freshness:</b> நீண்டநாள் சோதிக்காத நிலைகள் > அடிக்கடி சோதிக்கப்பட்டவை.</li>
-            <li><b>Role flip:</b> R→S / S→R மாற்றங்கள்.</li>
-            <li><b>Close vs Wick:</b> HTF close நிலையைத் தீர்மானிக்கும்.</li>
-          </ul>
-        `
-      },
-      {
-        title: "6) Multi-TF ஓட்டம் & Confluence",
-        body: `
-          <p>மேல் TF-ல் bias, நடு/குறைந்த TF-ல் entry. Indicators உறுதிப்படுத்துவதற்கே பயன்படுத்தவும்.</p>
-          <div class="callout"><i class="fa-solid fa-layer-group icon"></i>
-            எடுத்துக்காட்டு: Weekly close R மேல் → bias up. Daily pullback S-இல் hammer + RSI 45–55.
-            1H bullish engulf + MACD cross → entry; stop S கீழ்.
-          </div>
-        `
-      },
-      {
-        title: "7) ஆபத்து மேலாண்மை",
-        body: `
-          <p><b>Invalidation</b> முன்கூட்டியே நிர்ணயிக்கவும். Setup க்கு பொருத்தமான இடத்தில் stop வைக்கவும்.
-          ஒரு trade-க்கு 0.5%–2% கணக்கு அபாயம் மட்டுமே.</p>
-          <ul class="list">
-            <li>R:R குறைந்தது 1:1.5 ~ 1:3.</li>
-            <li>FTA-வில் பகுதி லாபம்; BE க்கு நகர்த்துவது கட்டமைப்பு காரணத்துடன் மட்டும்.</li>
-            <li>Revenge trading தவிர்க்கவும்.</li>
-          </ul>
-          <div class="warn"><i class="fa-solid fa-triangle-exclamation icon"></i>
-            Leverage தவறுகளையும் பெரிதாக்கும். Stop விசாலம் என்றால் அளவை குறைக்கவும்.
-          </div>
-        `
-      },
-      {
-        title: "8) எளிய Checklist",
-        body: `
-          <ul class="list">
-            <li>HTF bias என்ன?</li>
-            <li>புதிய S/R + trend line/channel உள்ளதா?</li>
-            <li>Pattern + Indicator + Level <b>confluence</b> உள்ளதா?</li>
-            <li>Invalidation / targets / R:R?</li>
-            <li>இந்த trade-ஐ <i>எதனால்</i> தவிர்ப்பேன்?</li>
-          </ul>
-        `
-      },
-      {
-        title: "9) பொதுவான பிழைகள்",
-        body: `
-          <ul class="list">
-            <li>Breakout-ஐ துரத்துதல் → Retest/LTF அமைப்பு காத்திருங்கள்.</li>
-            <li>Indicators அதிகம் சேர்த்தல்.</li>
-            <li>HTF புறக்கணிப்பு.</li>
-            <li>காரணமின்றி stop நகர்த்தல்.</li>
-            <li>Cherry-pick backtests → பரவலான தரவுடன் சோதிக்கவும்.</li>
-          </ul>
-        `
+    function recalcAccountTop(){
+      let sum=0;
+      for(const t of trades){
+        const pnl=(t.side==='LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
+        sum += pnl;
       }
-    ],
-    footerNote: `கல்வி நோக்கத்துக்காக. Journal, HTF-first, மற்றும் கட்டுப்படுத்தப்பட்ட அபாயம் — இதுவே அடித்தளம்.`
-  }
-};
+      unrealizedSum = sum; refreshTop();
+    }
 
-/* ========== Render ========== */
+    function forceTwoSmallLossesRandom(){
+      if (trades.length < 2) return;
+      const chosen=new Set();
+      while(chosen.size<2){ const r=Math.floor(Math.random() * trades.length); chosen.add(r); }
+      chosen.forEach((idx)=>{ const t=trades[idx]; const lossUSD=1 + Math.random()*5; const m=getMeta(t.sym);
+        let newMark=(t.side==='LONG') ? t.entry - (lossUSD / t.qty) : t.entry + (lossUSD / t.qty);
+        newMark=quantizeToTick(newMark, m.tickSize); t.mark=newMark; t.lockLoss=true; renderTrade(t); });
+      recalcAccountTop();
+    }
 
-const contentEl = document.getElementById('content');
-const langEl = document.getElementById('lang');
-const headTitleEl = document.getElementById('headTitle');
-const heroTitleEl = document.getElementById('heroTitle');
-const heroIntroEl = document.getElementById('heroIntro');
-const disclaimerEl = document.getElementById('disclaimer');
-const langLabelEl = document.getElementById('langLabel');
-const toast = document.getElementById('toast');
+    function connectFuturesMarkWS(){
+      const WS_URL='wss://fstream.binance.com/ws/!markPrice@arr';
+      let ws=new WebSocket(WS_URL);
+      ws.onopen=()=>console.log('[WS] Connected');
+      ws.onmessage=(evt)=>{
+        let data; try{ data=JSON.parse(evt.data);}catch{return;}
+        if(!Array.isArray(data)) return;
+        let touched=false;
+        for(const o of data){
+          const sym=o.s; const priceStr=o.p; if(!sym || priceStr===undefined) continue;
+          const mp=parseFloat(priceStr); if(!isFinite(mp)) continue;
+          for(const t of trades){ if(t.sym===sym){ if(t.lockLoss) continue; t.mark=mp; renderTrade(t); touched=true; } }
+        }
+        if(touched) {
+          recalcAccountTop();
+        }
+      };
+      ws.onclose=()=>{ console.warn('[WS] Closed. Reconnecting in 2s…'); setTimeout(connectFuturesMarkWS, 2000); };
+      ws.onerror=(err)=>{ console.error('[WS] Error', err); try{ ws.close(); }catch{} };
+    }
 
-function showToast(msg){
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(()=>toast.classList.remove('show'), 2600);
-}
+    function setBottomInset(){
+      const nav = document.getElementById('bottomNav');
+      const h = nav ? Math.max(56, Math.ceil(nav.getBoundingClientRect().height)) : 64;
+      document.documentElement.style.setProperty('--bottom-nav-h', h + 'px');
+    }
+    window.addEventListener('resize', setBottomInset);
+    document.addEventListener('DOMContentLoaded', setBottomInset);
 
-function render(lang='en'){
-  const t = translations[lang] || translations.en;
+    /* ===== PNL modal bits ===== */
+    const pnlEls = {
+      backdrop: document.getElementById('pnlBackdrop'),
+      time: null, // per-card
+    };
+    let currentSharedTrade = null;
+    const usernameStatic = 'Denuwanlakshitha';
 
-  // Header + hero
-  headTitleEl.textContent = t.headTitle;
-  document.title = t.headTitle;
-  langLabelEl.textContent = t.langLabel;
-  heroTitleEl.textContent = t.heroTitle;
-  heroIntroEl.innerHTML = t.heroIntro;
-  disclaimerEl.innerHTML = t.disclaimer;
+    function nowStamp(){
+      const d=new Date();
+      const pad=(n)=>String(n).padStart(2,'0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
 
-  // Sections
-  contentEl.innerHTML = '';
-  t.sections.forEach((sec, i)=>{
-    const card = document.createElement('article');
-    card.className = 'card';
-    // some sections side-by-side for rhythm
-    if([2,3,4].includes(i)) card.classList.add('half');
-    card.innerHTML = `
-      <h3>${sec.title}</h3>
-      ${sec.body}
-    `;
-    contentEl.appendChild(card);
-  });
+    function formatTimeWithTinyMonthOne(ts){
+      const m = ts.match(/^(\d{4})-(\d{2})-(\d{2}) (.+)$/);
+      if(!m) return ts;
+      const [, Y, MM, DD, rest] = m;
+      const mm = (MM.charAt(0) === '1')
+        ? `<span class="month-one">1</span>${MM.charAt(1)}`
+        : MM;
+      return `${Y}-${mm}-${DD} ${rest}`;
+    }
 
-  // Footer note
-  const foot = document.createElement('div');
-  foot.className = 'card';
-  foot.innerHTML = `<p class="foot">${t.footerNote}</p>`;
-  contentEl.appendChild(foot);
-}
+    /* >>> NEW: Build up to 3 cards for sliding <<< */
+    function buildPNLCard(t){
+      const sideTxt = (t.side === 'LONG') ? 'Long' : 'Short';
+      const pnl = (t.side === 'LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
+      const roi = roiPct(pnl, t.usedMargin);
 
-// initial render
-render('en');
+      const card = document.createElement('div');
+      card.className = 'pnl-card';
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="avatar"><img src="https://iili.io/Kese3ox.th.png" alt="User Avatar"></div>
+          <div class="username">
+            <span class="pnlUser">${usernameStatic}</span>
+            <span class="pnlTime">—</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="title">${t.sym} Perpetual</div>
+          <div class="position">
+            <span class="side" style="color:${t.side==='LONG' ? '#0ecb81' : '#ff6b6b'}">${sideTxt}</span>
+            <span class="divider" aria-hidden="true"></span>
+            <span class="lev">${t.leverage}x</span>
+          </div>
+          <div class="pnl"><span class="pnlValue">${
+            (document.querySelector('input[name="infoMode"]:checked')||{}).value === 'ROI'
+              ? ((roi>=0?'+':'') + toFixedSafe(roi,2) + '%')
+              : ( (document.querySelector('input[name="infoMode"]:checked')||{}).value === 'BOTH'
+                  ? `${formatSignedProfit(t.sym, pnl)} (${(roi>=0?'+':'')+toFixedSafe(roi,2)}%)`
+                  : formatSignedProfit(t.sym, pnl)
+                )
+          }</span> <span class="usdt">USDT</span></div>
+          <div class="prices">
+            <div class="entry">
+              <div class="label">Entry Price</div>
+              <div class="pnlEntry">${formatPrice(t.sym, t.entry)}</div>
+            </div>
+            <div class="last">
+              <div class="label">Last Price</div>
+              <div class="pnlLast">${formatPrice(t.sym, t.mark)}</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <span class="footer-line"></span>
+          <div class="footer-content">
+            <div class="footer-left">
+              <div>
+                <div class="binance-badge">
+                  <img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo">
+                  <span class="brand">BINANCE</span>
+                </div>
+                <div class="futures-ref">FUTURES</div>
+                <div class="referral">Referral Code 456516353</div>
+              </div>
+            </div>
+            <div class="qr"><img src="https://iili.io/KnWf8xt.png" alt="QR Code"></div>
+          </div>
+        </div>
+      `;
+      // time stamp per card
+      const ts = nowStamp();
+      card.querySelector('.pnlTime').innerHTML = formatTimeWithTinyMonthOne(ts);
+      return card;
+    }
 
-// language switcher
-langEl.addEventListener('change', (e)=>{
-  const val = e.target.value;
-  if(['en','si','ta'].includes(val)){
-    render(val);
-    showToast(val==='en' ? 'Switched to English' : (val==='si' ? 'සිංහලට මාරුවී ඇත' : 'தமிழுக்கு மாற்றப்பட்டது'));
-  } else {
-    // keep English content but notify user (as requested: others listed but not active)
-    langEl.value = 'en';
-    showToast('This language is coming soon. Showing English for now.');
-    render('en');
-  }
-});
-</script>
-</body>
-</html>
-<!-- partial -->
-  
+    function openPNLModal(trade){
+      setBottomInset();
+      currentSharedTrade = trade;
+
+      const idx = trades.indexOf(trade);
+      const picks = [trade];
+      if (trades[idx+1]) picks.push(trades[idx+1]);
+      if (trades[idx+2]) picks.push(trades[idx+2]);
+
+      const rail = document.getElementById('pnlCarousel');
+      rail.innerHTML = '';
+      picks.slice(0,3).forEach((t,i)=>{
+        const card = buildPNLCard(t);
+        if(i===0) card.id = 'pnlCard';
+        rail.appendChild(card);
+      });
+
+      // scroll to first
+      rail.scrollTo({left:0, behavior:'instant'});
+
+      // track center card to move id="pnlCard" for Save
+      rail.addEventListener('scroll', onCarouselScroll, { passive:true });
+      pnlEls.backdrop.classList.add('open');
+      pnlEls.backdrop.setAttribute('aria-hidden','false');
+
+      // apply "one-glyph" wrapping to all cards initially
+      wrapOnes(rail);
+    }
+
+    function closePNLModal(){
+      pnlEls.backdrop.classList.remove('open');
+      pnlEls.backdrop.setAttribute('aria-hidden','true');
+      currentSharedTrade = null;
+    }
+    pnlEls.backdrop.addEventListener('click', (e)=>{ if(e.target === pnlEls.backdrop) closePNLModal(); });
+
+    document.querySelectorAll('input[name="infoMode"]').forEach(r=>{
+      r.addEventListener('change', ()=>{ if(currentSharedTrade) updatePNLCardFromTrade(currentSharedTrade); });
+    });
+
+    function updatePNLCardFromTrade(t, silent=false){
+      // refresh the first card (active) contents
+      const card = document.getElementById('pnlCard');
+      if(!card) return;
+      const pnl = (t.side === 'LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
+      const roi = roiPct(pnl, t.usedMargin);
+      const mode = (document.querySelector('input[name="infoMode"]:checked')||{}).value || 'PNL';
+
+      let pnlText = '';
+      if(mode === 'PNL') pnlText = formatSignedProfit(t.sym, pnl);
+      else if(mode === 'ROI') pnlText = (roi>=0?'+':'') + toFixedSafe(roi,2) + '%';
+      else pnlText = `${formatSignedProfit(t.sym, pnl)}  (${(roi>=0?'+':'')+toFixedSafe(roi,2)}%)`;
+
+      card.querySelector('.pnlUser').textContent = 'Denuwanlakshitha';
+      card.querySelector('.title').textContent = `${t.sym} Perpetual`;
+      const sideEl = card.querySelector('.side');
+      sideEl.textContent = (t.side==='LONG'?'Long':'Short');
+      sideEl.style.color = (t.side==='LONG') ? '#0ecb81' : '#ff6b6b';
+      card.querySelector('.lev').textContent = `${t.leverage}x`;
+      card.querySelector('.pnlValue').textContent = pnlText;
+      card.querySelector('.pnlEntry').textContent = formatPrice(t.sym, t.entry);
+      card.querySelector('.pnlLast').textContent  = formatPrice(t.sym, t.mark);
+
+      if(!silent){
+        const ts = nowStamp();
+        card.querySelector('.pnlTime').innerHTML = formatTimeWithTinyMonthOne(ts);
+      }
+
+      // refresh glyph wrapping
+      wrapOnes(card);
+    }
+
+    /* Center-detection to switch active card for Save */
+    function onCarouselScroll(e){
+      const rail = e.currentTarget;
+      const cards = [...rail.querySelectorAll('.pnl-card')];
+      const mid = rail.scrollLeft + rail.clientWidth/2;
+      let best = null, bestDist = Infinity;
+      cards.forEach(c=>{
+        const x = c.offsetLeft + c.offsetWidth/2;
+        const d = Math.abs(x - mid);
+        if(d < bestDist){ bestDist = d; best = c; }
+      });
+      // set active id for save target
+      cards.forEach(c=> c.id && (c.id = ''));
+      if(best) best.id = 'pnlCard';
+    }
+
+    function setupSaveOnlyCard() {
+      const saveBtn = Array.from(document.querySelectorAll('#pnlActions .action')).find(a => a.getAttribute('title') === 'Save');
+      if(!saveBtn) return;
+      saveBtn.addEventListener('click', async () => {
+        const card = document.getElementById('pnlCard');
+        if(!card){ return; }
+        try{
+          const canvas = await html2canvas(card, {useCORS:true, scale:2, backgroundColor:null});
+          const dataURL = canvas.toDataURL('image/png');
+          const a = document.createElement('a');
+          a.href = dataURL;
+          a.download = `PNL_Card_${nowStamp().replace(/[: ]/g,'_')}.png`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        }catch(e){
+          alert('Save failed. Please try again.');
+        }
+      });
+    }
+
+    (async function init(){
+      sizeFeed();
+      setBottomInset();
+      initPhotoSlots();
+
+      await seedWithFuturesMark6M();
+
+      let initialUnreal = 0;
+      for (const t of trades) {
+        initialUnreal += (t.side === 'LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
+      }
+      unrealizedSum = initialUnreal;
+
+      const marginBalanceTarget = TARGET_MARGIN_BALANCE;
+      walletBalance = marginBalanceTarget - unrealizedSum;
+
+      realizedTodayUSD = randInt(2500, 8500);
+      realizedTodayPct = walletBalance > 0 ? (realizedTodayUSD / walletBalance) * 100 : 0;
+
+      refreshTop();
+
+      connectFuturesMarkWS();
+      setupSaveOnlyCard();
+    })();
+
+    document.getElementById("amount").textContent = "Loading…";
+    document.getElementById("walletValue").textContent = "Loading…";
+    document.getElementById("unrealizedValue").textContent = "Loading…";
+    document.getElementById("realizedSpan").textContent = "Loading…";
+  </script>
+
+  <!-- ========= ONE-GLYPH PATCH (applies to all cards in carousel) ========= -->
+  <script>
+    function wrapOnes(root){
+      const walker = document.createTreeWalker(
+        root,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode: (node) => {
+            if (!node.nodeValue || node.nodeValue.indexOf('1') === -1) return NodeFilter.FILTER_REJECT;
+            const p = node.parentNode;
+            if (!p || p.classList && p.classList.contains('one-glyph')) return NodeFilter.FILTER_REJECT;
+            if (p.closest && p.closest('.no-one-stylize')) return NodeFilter.FILTER_REJECT;
+            return NodeFilter.FILTER_ACCEPT;
+          }
+        }
+      );
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+
+      nodes.forEach(node => {
+        const txt = node.nodeValue;
+        if (!txt || txt.indexOf('1') === -1) return;
+        const frag = document.createDocumentFragment();
+        for (let i=0;i<txt.length;i++){
+          const ch = txt[i];
+          if (ch === '1'){
+            const span = document.createElement('span');
+            span.className = 'one-glyph';
+            span.textContent = '1';
+            frag.appendChild(span);
+          } else {
+            frag.appendChild(document.createTextNode(ch));
+          }
+        }
+        node.parentNode.replaceChild(frag, node);
+      });
+    }
+  </script>
 </body>
 </html>
