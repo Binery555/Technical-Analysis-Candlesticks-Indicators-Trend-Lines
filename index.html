@@ -46,8 +46,8 @@
       --scene-offset-y: 1.1cm;
 
       /* ✅ Footer badge alignment helpers */
-      --badge-icon: 16px;   /* logo size */
-      --badge-gap: 8px;     /* gap between logo and BINANCE text */
+      --badge-icon: 16px;
+      --badge-gap: 8px;
     }
 
     *{margin:0;padding:0;box-sizing:border-box}
@@ -239,7 +239,7 @@
       margin:0 auto;
       background:#000 center/cover no-repeat; /* default, overridden per slide */
     }
-    /* 🔰 Backgrounds per slide (your 3 images) */
+    /* 🔰 Backgrounds per slide */
     .pnl-card.bg1{ background-image:url('https://iili.io/KBlgIse.th.png'); }
     .pnl-card.bg2{ background-image:url('https://iili.io/KWFNXj4.th.png'); }
     .pnl-card.bg3{ background-image:url('https://iili.io/KesMjcb.md.gif'); }
@@ -266,7 +266,7 @@
     .pnl-card .footer-line { display:block; width:100%; height:1px; background:#444; margin:0; }
     .pnl-card .footer-content { padding:16px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
 
-    /* ✅ Footer content base (kept) */
+    /* ✅ Footer content base */
     .pnl-card .footer-left{
       font-size:12px; display:flex; align-items:center; gap:8px; line-height:1.1;
       transform: translateX(-0.35cm);
@@ -276,12 +276,10 @@
       margin-bottom:2px;
     }
     .pnl-card .footer-left .binance-badge img{ width:var(--badge-icon); height:var(--badge-icon); }
-
     .pnl-card .footer-left .binance-badge .brand{
       color:#fcd535; font-weight:800; letter-spacing:0;
       margin-left:0;
     }
-    /* ✅ Make "FUTURES" and "Referral…" start exactly under BINANCE's 'B' */
     .pnl-card .footer-left .futures-ref{
       color:#fff;
       padding-left: calc(var(--badge-icon) + var(--badge-gap));
@@ -289,17 +287,9 @@
       display:block;
     }
 
-    /* === ✅ Your new tweaks === */
-    /* 1) Move ONLY the yellow Binance logo slightly to the RIGHT */
-    .pnl-card .footer-left .binance-badge img{
-      transform: translateX(0.12cm); /* << move logo a touch to right */
-    }
-    /* 2) Drop ONLY the “Referral Code 456516353” line slightly lower */
-    .pnl-card .footer-left .futures-ref:last-child{
-      margin-top: 0.10cm;       /* a bit more space under FUTURES */
-      transform: translateY(0); /* keep layout flow, just add margin */
-    }
-    /* ========================= */
+    /* Minor footer tweaks kept from previous */
+    .pnl-card .footer-left .binance-badge img{ transform: translateX(0.12cm); }
+    .pnl-card .footer-left .futures-ref:last-child{ margin-top: 0.10cm; transform: translateY(0); }
 
     .pnl-card .qr { width:60px; height:60px; background:#fff; border-radius:6px; overflow:hidden; }
     .pnl-card .qr img { width:100%; height:100%; object-fit:cover; }
@@ -337,6 +327,17 @@
       line-height: 1;
       display:inline-block;
       transform: translateY(.2px);
+    }
+
+    /* === Requested tweaks === */
+    /* 1) Move ONLY the Profit card "Last Price" block 2.3cm to the LEFT */
+    .pnl-card .prices .last{
+      transform: translateX(-2.3cm);
+    }
+    /* 2) Set ONLY the Profit card "Entry Price" & "Last Price" labels to #939393 */
+    .pnl-card .prices .entry .label,
+    .pnl-card .prices .last  .label{
+      color:#939393 !important;
     }
   </style>
 </head>
@@ -956,7 +957,7 @@
           feedDiv.appendChild(panelState.node);
         }
         shuffleFeed(); sizeFeed();
-        return; // Done (no reseeding)
+        return;
       }
 
       // First-time seed → generate entries from 6M close, then persist
@@ -1086,7 +1087,6 @@
       return `${Y}-${mm}-${DD} ${rest}`;
     }
 
-    /* ✅ Sync clone slides so all 3 cards show the SAME info */
     function syncCloneSlides(payload){
       const cards = Array.from(document.querySelectorAll('.pnl-card')).filter(c=>c.id!=='pnlCard');
       cards.forEach(card=>{
@@ -1116,8 +1116,6 @@
       updatePNLCardFromTrade(trade);
       pnlEls.backdrop.classList.add('open');
       pnlEls.backdrop.setAttribute('aria-hidden','false');
-
-      // reset carousel to first slide each time
       setSlide(0, true);
     }
     function closePNLModal(){
@@ -1154,7 +1152,6 @@
       pnlEls.entry.textContent = formatPrice(t.sym, t.entry);
       pnlEls.last.textContent  = formatPrice(t.sym, t.mark);
 
-      // 🔁 Mirror into clone slides so all 3 show the SAME content
       const payload = {
         user: usernameStatic,
         timeHTML: pnlEls.time.innerHTML,
