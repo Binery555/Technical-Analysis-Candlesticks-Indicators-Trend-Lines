@@ -186,9 +186,25 @@
       background:transparent; border-radius:4px;
     }
     .photo-slot--bottom{ width:var(--slot-bottom); height:var(--slot-bottom); border-radius:3px; }
-    .photo-slot input[type="file"]{ position:absolute; inset:0; opacity:0; cursor:pointer; }
-    .photo-slot img{ width:88%; height:88%; margin:6%; object-fit:cover; display:block; border:none; outline:none; background:transparent; image-rendering:auto; }
-    .photo-slot--bottom img{ width:90%; height:90%; margin:5%; object-fit:cover; display:block; }
+    .photo-slot input[type="file"]{
+      position:absolute; inset:0; opacity:0; cursor:pointer;
+    }
+    .photo-slot img{
+      width:88%;
+      height:88%;
+      margin:6%;
+      object-fit:cover;
+      display:block;
+      border:none; outline:none; background:transparent;
+      image-rendering:auto;
+    }
+    .photo-slot--bottom img{
+      width:90%;
+      height:90%;
+      margin:5%;
+      object-fit:cover;
+      display:block;
+    }
     .photo-empty::after{ content:''; position:absolute; inset:0; background:transparent; }
 
     .pnl-modal-backdrop{
@@ -200,7 +216,6 @@
     .pnl-modal{ position:relative; max-width:520px; width:100%; outline:0; border:0; background:transparent; }
     .pnl-close{ display:none !important; }
 
-    /* Scene holds the carousel (kept same look/offset) */
     .pnl-scene{
       background:#2f343d;
       border:1px solid #3a3f49;
@@ -215,20 +230,20 @@
       transform: translate(var(--scene-offset-x), var(--scene-offset-y));
     }
 
-    /* >>> NEW: Horizontal carousel for up to 3 PNL cards <<< */
+    /* ---- NEW: swipeable carousel ---- */
     .pnl-carousel{
-      width:100%;
-      display:flex;
-      gap:12px;
+      width:calc(350px + 0.2cm);
       overflow-x:auto;
+      display:flex; gap:12px;
       scroll-snap-type:x mandatory;
       -webkit-overflow-scrolling:touch;
-      padding-bottom:6px;
+      touch-action:pan-x;
+      padding:0 6px;
     }
-    .pnl-carousel::-webkit-scrollbar{ height:6px; background:transparent; }
-    .pnl-carousel::-webkit-scrollbar-thumb{ background:#3a3f49; border-radius:10px; }
+    .pnl-carousel::-webkit-scrollbar{display:none}
 
     .pnl-card {
+      scroll-snap-align:center;
       font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif !important;
       font-feature-settings:"tnum"1,"lnum"1;
       letter-spacing:.15px;
@@ -236,13 +251,12 @@
       background:url('https://iili.io/KesMjcb.md.gif') no-repeat center/cover;
       border-radius:16px;
       width:calc(350px - 1cm);
-      flex:0 0 calc(350px - 1cm);
       overflow:hidden;
       box-shadow:0 0 10px rgba(0,0,0,.6);
       border:2px solid #2e2e2e;
       position:relative;
       margin:0 auto;
-      scroll-snap-align:center;
+      flex:0 0 calc(350px - 1cm);
     }
     .pnl-card .card-header { padding:16px; display:flex; align-items:center; gap:12px; margin-bottom:1cm; }
     .pnl-card .avatar { width:40px; height:40px; border-radius:50%; overflow:hidden; flex:0 0 40px; }
@@ -265,28 +279,27 @@
 
     .pnl-card .card-footer { background:#000; padding:0; display:block; position:relative; }
     .pnl-card .footer-line { display:block; width:100%; height:1px; background:#444; margin:0; }
-    .pnl-card .footer-content { padding:16px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
-    .pnl-card .footer-left { font-size:12px; display:flex; align-items:flex-start; gap:8px; line-height:1.1; }
-    .pnl-card .footer-left .binance-badge { display:inline-flex; align-items:center; gap:6px; margin-bottom:2px; transform:translateX(-.3cm); }
-    .pnl-card .footer-left .binance-badge img { width:16px; height:16px; }
-    .pnl-card .footer-left .binance-badge .brand { color:#fcd535; font-weight:800; }
-
-    /* >>> FUTURES bigger (just below Binance badge) <<< */
-    .pnl-card .futures-ref{
-      font-size:14px;
-      font-weight:900;
-      letter-spacing:.8px;
-      transform:translateX(.3cm);
-      text-transform:uppercase;
+    .pnl-card .footer-content {
+      padding:16px;
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
     }
-    /* >>> Referral line slightly lower <<< */
-    .pnl-card .referral{
-      font-size:12px;
-      opacity:.95;
-      margin-top:6px;
-      position:relative;
-      top:3px; /* tiny push down */
-      transform:translateX(.3cm);
+
+    /* >>> LEFT SHIFT (requested) <<< */
+    .pnl-card .footer-left{
+      font-size:12px; display:flex; align-items:flex-start; gap:6px; line-height:1.1;
+      transform:translateX(-0.55cm); /* move left a bit */
+    }
+    .pnl-card .footer-left .binance-badge{
+      display:inline-flex; align-items:center; gap:4px; margin-bottom:2px;
+      /* remove previous transforms */
+      transform:none;
+    }
+    .pnl-card .footer-left .binance-badge img{ width:16px; height:16px; }
+    .pnl-card .footer-left .binance-badge .brand{
+      color:#fcd535; font-weight:800; letter-spacing:0; margin-left:2px; /* hug the logo */
+    }
+    .pnl-card .footer-left .futures-ref{
+      transform:none; /* keep left */
     }
 
     .pnl-card .qr { width:60px; height:60px; background:#fff; border-radius:6px; overflow:hidden; }
@@ -320,7 +333,7 @@
     }
     .no-one-stylize .one-glyph{ font-family: inherit !important; font-weight: inherit !important; }
 
-    /* >>> NEW: Month '1' tiny style <<< */
+    /* >>> NEW: Month '1' tiny style (only the first digit of month) <<< */
     .pnl-card .month-one{
       font-size: .80em;
       line-height: 1;
@@ -331,6 +344,10 @@
 </head>
 <body>
   <div class="app">
+    <!-- (UNCHANGED TOP / FEED / NAV CODE) -->
+    <!-- ... your existing header, balances, actions, positions, bottom-nav ... -->
+    <!-- I kept all original content exactly as-is to avoid side-effects -->
+    <!-- BEGIN ORIGINAL CONTENT (trimmed for brevity in this snippet): -->
     <div class="top-stack" id="topStack">
       <header class="top-toggle" aria-label="Exchange or Wallet">
         <span class="seg-thumb" aria-hidden="true"></span>
@@ -453,10 +470,69 @@
   <div class="pnl-modal-backdrop" id="pnlBackdrop" aria-hidden="true">
     <div class="pnl-modal" role="dialog" aria-modal="true" aria-labelledby="pnlTitle">
       <div class="pnl-scene">
-        <!-- >>> NEW: Horizontal carousel with up to 3 cards <<< -->
-        <div class="pnl-carousel" id="pnlCarousel">
-          <!-- Cards will be injected here (first one gets id="pnlCard") -->
-        </div>
+
+        <!-- NEW: swipeable area with 3 cards -->
+        <div class="pnl-carousel" id="pnlCarousel" aria-label="Profit cards (side/slide)">
+          
+          <!-- Card 1 (original, interactive & savable) -->
+          <div class="pnl-card" id="pnlCard">
+            <div class="card-header">
+              <div class="avatar">
+                <img src="https://iili.io/Kese3ox.th.png" alt="User Avatar">
+              </div>
+              <div class="username">
+                <span id="pnlUser">Prasadnuwankumara</span>
+                <span id="pnlTime">—</span>
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div class="title" id="pnlTitle">—</div>
+              <div class="position">
+                <span class="side" id="pnlSide">—</span>
+                <span class="divider" aria-hidden="true"></span>
+                <span class="lev" id="pnlLev">—</span>
+              </div>
+              <div class="pnl"><span id="pnlValue">0.00</span> <span class="usdt">USDT</span></div>
+              <div class="prices">
+                <div class="entry">
+                  <div class="label">Entry Price</div>
+                  <div id="pnlEntry">—</div>
+                </div>
+                <div class="last">
+                  <div class="label">Last Price</div>
+                  <div id="pnlLast">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <span class="footer-line"></span>
+              <div class="footer-content">
+                <div class="footer-left">
+                  <div>
+                    <div class="binance-badge">
+                      <img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo">
+                      <span class="brand">BINANCE</span>
+                    </div>
+                    <div class="futures-ref">FUTURES</div>
+                    <div class="futures-ref">Referral Code 456516353</div>
+                  </div>
+                </div>
+                <div class="qr">
+                  <img src="https://iili.io/KnWf8xt.png" alt="QR Code">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 (cloned in JS so values match; used only for side/slide) -->
+          <div class="pnl-card" id="pnlCardClone1" aria-hidden="true"></div>
+
+          <!-- Card 3 (cloned in JS so values match; used only for side/slide) -->
+          <div class="pnl-card" id="pnlCardClone2" aria-hidden="true"></div>
+
+        </div><!-- /pnl-carousel -->
 
         <div class="pnl-underbar">
           <div class="selector">
@@ -655,7 +731,7 @@
     function formatPrice(sym, x) { const m = getMeta(sym); const q = quantizeToTick(x, m.tickSize); const s = toFixedSafe(q, m.priceDp); const [i, d] = s.split('.'); return joinIntDec(i, d); }
 
     const primeSymbols = ['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','DOGEUSDT','TONUSDT','ADAUSDT','AVAXUSDT','TRXUSDT','LINKUSDT','DOTUSDT','NEARUSDT','OPUSDT','ARBUSDT','APTUSDT','INJUSDT','RNDRUSDT','SEIUSDT','TIAUSDT','ONDOUSDT'];
-    const seedSymbols = ['BTCUSDT','ETHUSDT','BNBUSDT','ADAUSDT','SOLUSDT','XRPUSDT','DOTUSDT','LTCUSDT','LINKUSDT','DOGEUSDT','AAVEUSDT','SUSHIUSDT','SHIBUSDT','COMPUSDT','ETCUSDT','ZECUSDT','XMRUSDT','LRCUSDT','QNTUSDT','CRVUSDT','UNIUSDT','BCHUSDT','XLMUSDT','ATOMUSDT','MATICUSDT','AVAXUSDT','TRXUSDT','EOSUSDT','NEARUSDT','FILUSDT','OPUSDT','ARBUSDT','APTUSDT','SUIUSDT','INJUSDT','RNDRUSDT','GALAUSDT','THETAUSDT','SANDUSDT','MANAUSDT','AXSUSDT','CFXUSDT','ICPUSDT','LDOUSDT','PEPEUSDT','FLOKIUSDT','WIFUSDT','ARKUSDT','IOTAUSDT','KASUSDT','PYTHUSDT','STRKUSDT','JUPUSDT','APEUSDT','BLURUSDT','SEIUSDT','TIAUSDT','TONUSDT','ONDOUSDT'];
+    const seedSymbols = ['BTCUSDT','ETHUSDT','BNBUSDT','ADAUSDT','SOLUSDT','XRPUSDT','DOTUSDT','LTCUSDT','LINKUSDT','DOGEUSDT','AAVEUSDT','SUSHIUSDT','SHIBUSDT','COMPUSDT','ETCUSDT','ZECUSDT','XMRUSDT','LRCUSDT','QNTUSDT','CRVUSDT','UNIUSDT','BCHUSDT','XLMUSDT','ATOMUSDT','MATICUSDT','AVAXUSDT','TRXUSDT','EOSUSDT','NEARUSDT','FILUSDT','OPUSUSDT','ARBUSDT','APTUSDT','SUIUSDT','INJUSDT','RNDRUSDT','GALAUSDT','THETAUSDT','SANDUSDT','MANAUSDT','AXSUSDT','CFXUSDT','ICPUSDT','LDOUSDT','PEPEUSDT','FLOKIUSDT','WIFUSDT','ARKUSDT','IOTAUSDT','KASUSDT','PYTHUSDT','STRKUSDT','JUPUSDT','APEUSDT','BLURUSDT','SEIUSDT','TIAUSDT','TONUSDT','ONDOUSDT'];
     const allSymbols = Array.from(new Set([...primeSymbols, ...seedSymbols]));
 
     const maintenanceMarginRates = { BTCUSDT:0.004, ETHUSDT:0.005, BNBUSDT:0.005, ADAUSDT:0.010, SOLUSDT:0.008, XRPUSDT:0.010, DOTUSDT:0.010, LTCUSDT:0.010, LINKUSDT:0.010, DOGEUSDT:0.012, AAVEUSDT:0.010, SUSHIUSDT:0.015, SHIBUSDT:0.020, COMPUSDT:0.010, ETCUSDT:0.010, ZECUSDT:0.015, XMRUSDT:0.020, LRCUSDT:0.020, QNTUSDT:0.015, CRVUSDT:0.020, UNIUSDT:0.010, BCHUSDT:0.010, XLMUSDT:0.015, ATOMUSDT:0.010, MATICUSDT:0.010, AVAXUSDT:0.010, TRXUSDT:0.020, EOSUSDT:0.015, NEARUSDT:0.020, FILUSDT:0.015, OPUSDT:0.015, ARBUSDT:0.020, APTUSDT:0.015, SUIUSDT:0.020, INJUSDT:0.015, RNDRUSDT:0.015, GALAUSDT:0.025, THETAUSDT:0.020, SANDUSDT:0.020, MANAUSDT:0.020, AXSUSDT:0.020, CFXUSDT:0.025, ICPUSDT:0.015, LDOUSDT:0.020, PEPEUSDT:0.030, FLOKIUSDT:0.030, WIFUSDT:0.030, ARKUSDT:0.020, IOTAUSDT:0.020, KASUSDT:0.025, PYTHUSDT:0.020, STRKUSDT:0.020, JUPUSDT:0.020, APEUSDT:0.020, BLURUSDT:0.020, SEIUSDT:0.020, TIAUSDT:0.020, TONUSDT:0.015, ONDOUSDT:0.020 };
@@ -772,7 +848,7 @@
       const mrEl = t.node.querySelector('.value.margin-ratio-value'); mrEl.textContent = toFixedSafe(mRatio, 2) + '%'; mrEl.classList.toggle('green', mRatio < 80); mrEl.classList.toggle('red', mRatio >= 80);
       const liqEl = t.node.querySelector('.value.liq'); liqEl.textContent = (liq === null) ? '—' : formatPrice(t.sym, liq);
 
-      if (currentSharedTrade === t) updatePNLCardFromTrade(t, /*silent*/true);
+      if (currentSharedTrade === t) updatePNLCardFromTrade(t);
     }
 
     function sixMonthsAgoMs(){ const d=new Date(); d.setMonth(d.getMonth()-6); d.setHours(0,0,0,0); return d.getTime(); }
@@ -799,9 +875,11 @@
       const empty=document.getElementById("emptyState"); if(empty) empty.remove();
       await loadExchangeMeta();
 
+      // Always get live mark prices
       const res=await fetch('https://fapi.binance.com/fapi/v1/premiumIndex'); const arr=await res.json();
       const markMap=Object.create(null); arr.forEach(o=>{ if(o&&o.symbol) markMap[o.symbol]=parseFloat(o.markPrice); });
 
+      // Try to restore persisted trades (keeps ENTRY & MARGINS unchanged)
       const saved = loadTrades();
       if (saved && saved.length){
         for (const s of saved){
@@ -825,6 +903,7 @@
         return;
       }
 
+      // First-time seed
       symbols = symbols.filter(s=>!!marketMeta[s]);
       const poolForEntry=Array.from(new Set([...primeSymbols, ...symbols.slice(0, tradeCount*2)]));
       const entryMap=await loadSixMonthEntryMap(poolForEntry);
@@ -921,10 +1000,21 @@
     window.addEventListener('resize', setBottomInset);
     document.addEventListener('DOMContentLoaded', setBottomInset);
 
-    /* ===== PNL modal bits ===== */
+    /* ===== PNL card bindings ===== */
     const pnlEls = {
       backdrop: document.getElementById('pnlBackdrop'),
-      time: null, // per-card
+      title: document.getElementById('pnlTitle'),
+      side: document.getElementById('pnlSide'),
+      lev: document.getElementById('pnlLev'),
+      pnl: document.getElementById('pnlValue'),
+      entry: document.getElementById('pnlEntry'),
+      last: document.getElementById('pnlLast'),
+      time: document.getElementById('pnlTime'),
+      user: document.getElementById('pnlUser'),
+      card: document.getElementById('pnlCard'),
+      carousel: document.getElementById('pnlCarousel'),
+      clone1: document.getElementById('pnlCardClone1'),
+      clone2: document.getElementById('pnlCardClone2')
     };
     let currentSharedTrade = null;
     const usernameStatic = 'Denuwanlakshitha';
@@ -935,6 +1025,7 @@
       return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
     }
 
+    /* Tiny month first-digit */
     function formatTimeWithTinyMonthOne(ts){
       const m = ts.match(/^(\d{4})-(\d{2})-(\d{2}) (.+)$/);
       if(!m) return ts;
@@ -945,100 +1036,26 @@
       return `${Y}-${mm}-${DD} ${rest}`;
     }
 
-    /* >>> NEW: Build up to 3 cards for sliding <<< */
-    function buildPNLCard(t){
-      const sideTxt = (t.side === 'LONG') ? 'Long' : 'Short';
-      const pnl = (t.side === 'LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
-      const roi = roiPct(pnl, t.usedMargin);
-
-      const card = document.createElement('div');
-      card.className = 'pnl-card';
-      card.innerHTML = `
-        <div class="card-header">
-          <div class="avatar"><img src="https://iili.io/Kese3ox.th.png" alt="User Avatar"></div>
-          <div class="username">
-            <span class="pnlUser">${usernameStatic}</span>
-            <span class="pnlTime">—</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="title">${t.sym} Perpetual</div>
-          <div class="position">
-            <span class="side" style="color:${t.side==='LONG' ? '#0ecb81' : '#ff6b6b'}">${sideTxt}</span>
-            <span class="divider" aria-hidden="true"></span>
-            <span class="lev">${t.leverage}x</span>
-          </div>
-          <div class="pnl"><span class="pnlValue">${
-            (document.querySelector('input[name="infoMode"]:checked')||{}).value === 'ROI'
-              ? ((roi>=0?'+':'') + toFixedSafe(roi,2) + '%')
-              : ( (document.querySelector('input[name="infoMode"]:checked')||{}).value === 'BOTH'
-                  ? `${formatSignedProfit(t.sym, pnl)} (${(roi>=0?'+':'')+toFixedSafe(roi,2)}%)`
-                  : formatSignedProfit(t.sym, pnl)
-                )
-          }</span> <span class="usdt">USDT</span></div>
-          <div class="prices">
-            <div class="entry">
-              <div class="label">Entry Price</div>
-              <div class="pnlEntry">${formatPrice(t.sym, t.entry)}</div>
-            </div>
-            <div class="last">
-              <div class="label">Last Price</div>
-              <div class="pnlLast">${formatPrice(t.sym, t.mark)}</div>
-            </div>
-          </div>
-        </div>
-        <div class="card-footer">
-          <span class="footer-line"></span>
-          <div class="footer-content">
-            <div class="footer-left">
-              <div>
-                <div class="binance-badge">
-                  <img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo">
-                  <span class="brand">BINANCE</span>
-                </div>
-                <div class="futures-ref">FUTURES</div>
-                <div class="referral">Referral Code 456516353</div>
-              </div>
-            </div>
-            <div class="qr"><img src="https://iili.io/KnWf8xt.png" alt="QR Code"></div>
-          </div>
-        </div>
-      `;
-      // time stamp per card
-      const ts = nowStamp();
-      card.querySelector('.pnlTime').innerHTML = formatTimeWithTinyMonthOne(ts);
-      return card;
+    /* ---- NEW: simple 3-card side/slide support ---- */
+    function syncClonesFromMain(){
+      // clone visual HTML of the main card into the two side cards
+      pnlEls.clone1.innerHTML = pnlEls.card.innerHTML;
+      pnlEls.clone2.innerHTML = pnlEls.card.innerHTML;
     }
 
     function openPNLModal(trade){
       setBottomInset();
       currentSharedTrade = trade;
-
-      const idx = trades.indexOf(trade);
-      const picks = [trade];
-      if (trades[idx+1]) picks.push(trades[idx+1]);
-      if (trades[idx+2]) picks.push(trades[idx+2]);
-
-      const rail = document.getElementById('pnlCarousel');
-      rail.innerHTML = '';
-      picks.slice(0,3).forEach((t,i)=>{
-        const card = buildPNLCard(t);
-        if(i===0) card.id = 'pnlCard';
-        rail.appendChild(card);
-      });
-
-      // scroll to first
-      rail.scrollTo({left:0, behavior:'instant'});
-
-      // track center card to move id="pnlCard" for Save
-      rail.addEventListener('scroll', onCarouselScroll, { passive:true });
+      pnlEls.user.textContent = usernameStatic;
+      const ts = nowStamp();
+      pnlEls.time.innerHTML = formatTimeWithTinyMonthOne(ts);
+      updatePNLCardFromTrade(trade);
+      syncClonesFromMain(); // make 3 cards identical so user can side/slide
       pnlEls.backdrop.classList.add('open');
       pnlEls.backdrop.setAttribute('aria-hidden','false');
-
-      // apply "one-glyph" wrapping to all cards initially
-      wrapOnes(rail);
+      // center the first card
+      pnlEls.carousel.scrollTo({left:0, behavior:'instant' in window ? 'instant' : 'auto'});
     }
-
     function closePNLModal(){
       pnlEls.backdrop.classList.remove('open');
       pnlEls.backdrop.setAttribute('aria-hidden','true');
@@ -1047,55 +1064,31 @@
     pnlEls.backdrop.addEventListener('click', (e)=>{ if(e.target === pnlEls.backdrop) closePNLModal(); });
 
     document.querySelectorAll('input[name="infoMode"]').forEach(r=>{
-      r.addEventListener('change', ()=>{ if(currentSharedTrade) updatePNLCardFromTrade(currentSharedTrade); });
+      r.addEventListener('change', ()=>{ if(currentSharedTrade){ updatePNLCardFromTrade(currentSharedTrade); syncClonesFromMain(); } });
     });
 
-    function updatePNLCardFromTrade(t, silent=false){
-      // refresh the first card (active) contents
-      const card = document.getElementById('pnlCard');
-      if(!card) return;
+    function updatePNLCardFromTrade(t){
+      if(!t) return;
       const pnl = (t.side === 'LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
       const roi = roiPct(pnl, t.usedMargin);
+      const sideTxt = (t.side === 'LONG') ? 'Long' : 'Short';
+      pnlEls.title.textContent = `${t.sym} Perpetual`;
+      pnlEls.side.textContent = sideTxt;
+      pnlEls.side.style.color = (t.side === 'LONG') ? '#0ecb81' : '#ff6b6b';
+      pnlEls.lev.textContent = `${t.leverage}x`;
       const mode = (document.querySelector('input[name="infoMode"]:checked')||{}).value || 'PNL';
-
-      let pnlText = '';
-      if(mode === 'PNL') pnlText = formatSignedProfit(t.sym, pnl);
-      else if(mode === 'ROI') pnlText = (roi>=0?'+':'') + toFixedSafe(roi,2) + '%';
-      else pnlText = `${formatSignedProfit(t.sym, pnl)}  (${(roi>=0?'+':'')+toFixedSafe(roi,2)}%)`;
-
-      card.querySelector('.pnlUser').textContent = 'Denuwanlakshitha';
-      card.querySelector('.title').textContent = `${t.sym} Perpetual`;
-      const sideEl = card.querySelector('.side');
-      sideEl.textContent = (t.side==='LONG'?'Long':'Short');
-      sideEl.style.color = (t.side==='LONG') ? '#0ecb81' : '#ff6b6b';
-      card.querySelector('.lev').textContent = `${t.leverage}x`;
-      card.querySelector('.pnlValue').textContent = pnlText;
-      card.querySelector('.pnlEntry').textContent = formatPrice(t.sym, t.entry);
-      card.querySelector('.pnlLast').textContent  = formatPrice(t.sym, t.mark);
-
-      if(!silent){
-        const ts = nowStamp();
-        card.querySelector('.pnlTime').innerHTML = formatTimeWithTinyMonthOne(ts);
+      let pnlText;
+      if(mode === 'PNL') {
+        pnlText = formatSignedProfit(t.sym, pnl);
+      } else if(mode === 'ROI') {
+        pnlText = (roi>=0?'+':'') + toFixedSafe(roi,2) + '%';
+      } else {
+        pnlText = `${formatSignedProfit(t.sym, pnl)}  (${(roi>=0?'+':'')+toFixedSafe(roi,2)}%)`;
       }
-
-      // refresh glyph wrapping
-      wrapOnes(card);
-    }
-
-    /* Center-detection to switch active card for Save */
-    function onCarouselScroll(e){
-      const rail = e.currentTarget;
-      const cards = [...rail.querySelectorAll('.pnl-card')];
-      const mid = rail.scrollLeft + rail.clientWidth/2;
-      let best = null, bestDist = Infinity;
-      cards.forEach(c=>{
-        const x = c.offsetLeft + c.offsetWidth/2;
-        const d = Math.abs(x - mid);
-        if(d < bestDist){ bestDist = d; best = c; }
-      });
-      // set active id for save target
-      cards.forEach(c=> c.id && (c.id = ''));
-      if(best) best.id = 'pnlCard';
+      pnlEls.pnl.textContent = pnlText;
+      pnlEls.pnl.parentElement.style.color = (pnl >= 0) ? '#0ecb81' : '#e04b4a';
+      pnlEls.entry.textContent = formatPrice(t.sym, t.entry);
+      pnlEls.last.textContent  = formatPrice(t.sym, t.mark);
     }
 
     function setupSaveOnlyCard() {
@@ -1126,15 +1119,18 @@
 
       await seedWithFuturesMark6M();
 
+      // compute unrealized from persisted (or freshly seeded) trades
       let initialUnreal = 0;
       for (const t of trades) {
         initialUnreal += (t.side === 'LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
       }
       unrealizedSum = initialUnreal;
 
-      const marginBalanceTarget = TARGET_MARGIN_BALANCE;
+      /*** >>> ENSURE EXACT MARGIN BALANCE (walletBalance derived) <<< ***/
+      const marginBalanceTarget = TARGET_MARGIN_BALANCE; // fixed
       walletBalance = marginBalanceTarget - unrealizedSum;
 
+      // Realized PNL display (synthetic)
       realizedTodayUSD = randInt(2500, 8500);
       realizedTodayPct = walletBalance > 0 ? (realizedTodayUSD / walletBalance) * 100 : 0;
 
@@ -1150,43 +1146,57 @@
     document.getElementById("realizedSpan").textContent = "Loading…";
   </script>
 
-  <!-- ========= ONE-GLYPH PATCH (applies to all cards in carousel) ========= -->
+  <!-- ========= ONE-GLYPH PATCH (force digit `1` inside pnl-card to Binance PLEX) ========= -->
   <script>
-    function wrapOnes(root){
-      const walker = document.createTreeWalker(
-        root,
-        NodeFilter.SHOW_TEXT,
-        {
-          acceptNode: (node) => {
-            if (!node.nodeValue || node.nodeValue.indexOf('1') === -1) return NodeFilter.FILTER_REJECT;
-            const p = node.parentNode;
-            if (!p || p.classList && p.classList.contains('one-glyph')) return NodeFilter.FILTER_REJECT;
-            if (p.closest && p.closest('.no-one-stylize')) return NodeFilter.FILTER_REJECT;
-            return NodeFilter.FILTER_ACCEPT;
-          }
-        }
-      );
-      const nodes = [];
-      while (walker.nextNode()) nodes.push(walker.currentNode);
+    (function(){
+      const pnlCard = document.getElementById('pnlCard');
+      if(!pnlCard) return;
 
-      nodes.forEach(node => {
-        const txt = node.nodeValue;
-        if (!txt || txt.indexOf('1') === -1) return;
-        const frag = document.createDocumentFragment();
-        for (let i=0;i<txt.length;i++){
-          const ch = txt[i];
-          if (ch === '1'){
-            const span = document.createElement('span');
-            span.className = 'one-glyph';
-            span.textContent = '1';
-            frag.appendChild(span);
-          } else {
-            frag.appendChild(document.createTextNode(ch));
+      function wrapOnes(root){
+        const walker = document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode: (node) => {
+              if (!node.nodeValue || node.nodeValue.indexOf('1') === -1) return NodeFilter.FILTER_REJECT;
+              const p = node.parentNode;
+              if (!p || p.classList && p.classList.contains('one-glyph')) return NodeFilter.FILTER_REJECT;
+              if (p.closest && p.closest('.no-one-stylize')) return NodeFilter.FILTER_REJECT;
+              return NodeFilter.FILTER_ACCEPT;
+            }
           }
-        }
-        node.parentNode.replaceChild(frag, node);
+        );
+        const nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+
+        nodes.forEach(node => {
+          const txt = node.nodeValue;
+          if (!txt || txt.indexOf('1') === -1) return;
+          const frag = document.createDocumentFragment();
+          for (let i=0;i<txt.length;i++){
+            const ch = txt[i];
+            if (ch === '1'){
+              const span = document.createElement('span');
+              span.className = 'one-glyph';
+              span.textContent = '1';
+              frag.appendChild(span);
+            } else {
+              frag.appendChild(document.createTextNode(ch));
+            }
+          }
+          node.parentNode.replaceChild(frag, node);
+        });
+      }
+
+      wrapOnes(pnlCard);
+
+      let timer = null;
+      const mo = new MutationObserver(() => {
+        if (timer) cancelAnimationFrame(timer);
+        timer = requestAnimationFrame(()=> wrapOnes(pnlCard));
       });
-    }
+      mo.observe(pnlCard, {subtree:true, childList:true, characterData:true});
+    })();
   </script>
 </body>
 </html>
