@@ -347,32 +347,20 @@
       box-shadow:none !important;
     }
 
-    /* 2) Make the FUTURES word under yellow BINANCE to exactly 18px */
-    .pnl-card .footer-left .futures-ref:first-of-type{
-      font-size:18px !important;
-      font-weight:600 !important; /* numbers not bolded elsewhere */
-      letter-spacing:0.2px;
-      line-height:1.1;
-    }
+    /* --- FIX: make FUTURES under BINANCE really big --- */
+.pnl-card .card-footer .footer-left .binance-badge + .futures-ref{
+  font-size:15px !important;   /* increase here if you want even bigger */
+  font-weight:600 !important;
+  line-height:1.1 !important;
+  letter-spacing:0.9px !important;
+}
 
-    /* 3) Referral code numbers should NOT be bold */
-    .pnl-card .footer-left .futures-ref + .futures-ref{
-      font-size:12px !important;
-      font-weight:400 !important; /* normal */
-    }
-    /* If any '1' digits were auto-bolded inside the footer, reset them */
-    .pnl-card .card-footer .one-glyph{
-      font-family:inherit !important;
-      font-weight:400 !important;
-    }
+/* keep referral line normal weight */
+.pnl-card .card-footer .footer-left .binance-badge + .futures-ref + .futures-ref{
+  font-size:12px !important;
+  font-weight:400 !important;
+}
 
-    /* 4) Lower Entry Price & Last Price a bit (without breaking left-shift) */
-    .pnl-card .prices{
-      margin-top:14px !important; /* push whole price row slightly down */
-    }
-    .pnl-card .prices .entry,
-    .pnl-card .prices .last{
-      margin-top:6px !important;  /* local nudge down; uses margin to avoid overriding transform */
     }
     /* =============================================================== */
   </style>
@@ -1213,7 +1201,7 @@
           const dataURL = canvas.toDataURL('image/png');
           const a = document.createElement('a');
           a.href = dataURL;
-          a.download = `PNL_Card_${nowStamp().replace(/[: ]/g,'_')}.png`;
+          a.download = `PNL_Card_${nowStamp().replace(/:{1}|\\s/g,'_')}.png`;
           document.body.appendChild(a);
           a.click();
           a.remove();
