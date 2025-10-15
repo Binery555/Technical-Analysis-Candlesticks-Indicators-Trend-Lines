@@ -44,10 +44,6 @@
 
       --scene-offset-x: -0.5cm;
       --scene-offset-y: 1.1cm;
-
-      /* Slide action width (revealed when swiping left) */
-      --slide-actions-w: 168px;
-      --slide-radius: 8px;
     }
 
     *{margin:0;padding:0;box-sizing:border-box}
@@ -143,65 +139,12 @@
     .empty-state p{font-size:12px;color:#A1A6B0;margin-bottom:12px}
     .empty-state .cta{background:#F3BA2F;color:#1E2128;font-size:12px;padding:8px 12px;border-radius:6px;display:inline-flex;align-items:center;gap:6px}
 
-    /* ====== PROFIT CARD (trade-panel) with inner slide ====== */
-    .trade-panel { 
-      background: transparent; 
+    .trade-panel { background: var(--panel-bg); padding: 12px; border-radius: 8px; border: none; box-shadow: none;
       margin-left:calc(-1 * (var(--frame-gutter-x) - var(--card-inset)));
       margin-right:calc(-1 * (var(--frame-gutter-x) - var(--card-inset)));
-      border-radius: var(--slide-radius);
-      position: relative;
-      overflow: hidden; /* keep slide inside the card */
     }
     .trade-panel + .trade-panel{margin-top:8px}
-
-    .slide-wrap{
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-    /* Actions revealed on the RIGHT when sliding left */
-    .slide-actions{
-      position:absolute; top:0; right:0; bottom:0;
-      width:var(--slide-actions-w);
-      display:flex; flex-direction:column; justify-content:space-between; align-items:stretch;
-      padding:8px;
-      background:#2a2f35; /* darker like Binance */
-      border-left:1px solid #3a3f49;
-      gap:8px;
-    }
-    .slide-actions .act{
-      background:#3b414d;
-      color:#fff;
-      border-radius:10px;
-      padding:10px 8px;
-      font-size:12px;
-      font-weight:600;
-      text-align:center;
-      transition:transform .08s ease, background .2s ease;
-    }
-    .slide-actions .act:active{ transform:scale(.98); }
-    .slide-actions .act.share{ background:#F3BA2F; color:#1E2128; }
-    .slide-actions .act.close{ background:#e04b4a; }
-    .slide-actions .act.tpl{ background:#3acf87; color:#0f151b; }
-
-    /* The content that slides left/right */
-    .slide-content{
-      position: relative;
-      background: var(--panel-bg);
-      border-radius: var(--slide-radius);
-      border:none;
-      box-shadow:none;
-      transform: translate3d(0,0,0); /* GPU */
-      will-change: transform;
-      transition: transform .18s cubic-bezier(.2,.7,.2,1);
-    }
-    .trade-panel.sliding .slide-content{
-      transition: none; /* while dragging */
-      cursor: grabbing;
-    }
-
-    /* original inner layout preserved inside slide-content */
-    .trade-panel .header { display: flex; align-items: center; margin-bottom: 8px; padding: 12px 12px 0; }
+    .trade-panel .header { display: flex; align-items: center; margin-bottom: 8px; }
     .icon-buy, .icon-sell { color: #fff; width: 20px; height: 20px; display:flex;align-items:center;justify-content:center;
       font-size: 12px; font-weight: 700; margin-right: 8px; border-radius: 2px; }
     .icon-buy { background: var(--text-green); }
@@ -214,7 +157,7 @@
     .exclamations span.green, .exclamations span.green::after { background: var(--text-green); }
     .share { margin-left: auto; color: var(--text-secondary); font-size: 16px; cursor: pointer; }
 
-    .content-columns { display: flex; justify-content: space-between; align-items: flex-end; margin: 8px; gap: 8px; padding: 0 4px 8px; }
+    .content-columns { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; gap: 8px; }
     .column { display: flex; flex-direction: column; }
     .column.right { text-align: right; }
     .stat { margin-bottom: 8px; }
@@ -225,7 +168,7 @@
     .value.red, .value.percent.red { color: var(--text-red); font-size: 18px; font-weight: 700; }
     .margin-ratio-value { font-size: 12px !important; }
 
-    .tp-actions{display:flex;justify-content:space-between;gap:8px;margin:0 8px 10px}
+    .tp-actions{display:flex;justify-content:space-between;gap:8px;margin-top:2px}
     .tp-btn{flex:1;background:var(--btn-bg);color:#fff;border:none;border-radius:6px;padding:6px 0;font-size:12px;cursor:pointer;transition:background .3s}
     .tp-btn:hover{background:var(--secondary-bg)}
 
@@ -287,12 +230,27 @@
       transform: translate(var(--scene-offset-x), var(--scene-offset-y));
     }
 
+    /* NEW: drag-to-slide scroller with snap; no visible scrollbar */
+    .pnl-scroller{
+      width:100%;
+      display:flex;
+      gap:14px;
+      overflow-x:auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type:x mandatory;
+      scrollbar-width:none;
+      cursor:grab;
+      padding-bottom:6px;
+    }
+    .pnl-scroller:active{ cursor:grabbing; }
+    .pnl-scroller::-webkit-scrollbar{ display:none; }
+
     .pnl-card {
       font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif !important;
       font-feature-settings:"tnum"1,"lnum"1;
       letter-spacing:.15px;
       color:#fff;
-      background:url('https://iili.io/KesMjcb.md.gif') no-repeat center/cover;
+      background:#000 center/cover no-repeat;
       border-radius:16px;
       width:calc(350px - 1cm);
       overflow:hidden;
@@ -300,7 +258,14 @@
       border:2px solid #2e2e2e;
       position:relative;
       margin:0 auto;
+      flex:0 0 calc(350px - 1cm);
+      scroll-snap-align:center;
     }
+    /* Apply your 3 backgrounds */
+    .pnl-card.bg1{ background-image:url('https://iili.io/KBlgIse.th.png'); }
+    .pnl-card.bg2{ background-image:url('https://iili.io/KWFNXj4.th.png'); }
+    .pnl-card.bg3{ background-image:url('https://iili.io/KesMjcb.md.gif'); }
+
     .pnl-card .card-header { padding:16px; display:flex; align-items:center; gap:12px; margin-bottom:1cm; }
     .pnl-card .avatar { width:40px; height:40px; border-radius:50%; overflow:hidden; flex:0 0 40px; }
     .pnl-card .avatar img { width:100%; height:100%; object-fit:cover; }
@@ -493,56 +458,120 @@
   <div class="pnl-modal-backdrop" id="pnlBackdrop" aria-hidden="true">
     <div class="pnl-modal" role="dialog" aria-modal="true" aria-labelledby="pnlTitle">
       <div class="pnl-scene">
-        <div class="pnl-card" id="pnlCard">
-          <div class="card-header">
-            <div class="avatar">
-              <img src="https://iili.io/Kese3ox.th.png" alt="User Avatar">
-            </div>
-            <div class="username">
-              <span id="pnlUser">Prasadnuwankumara</span>
-              <span id="pnlTime">—</span>
-            </div>
-          </div>
-
-          <div class="card-body">
-            <div class="title" id="pnlTitle">—</div>
-            <div class="position">
-              <span class="side" id="pnlSide">—</span>
-              <span class="divider" aria-hidden="true"></span>
-              <span class="lev" id="pnlLev">—</span>
-            </div>
-            <div class="pnl"><span id="pnlValue">0.00</span> <span class="usdt">USDT</span></div>
-            <div class="prices">
-              <div class="entry">
-                <div class="label">Entry Price</div>
-                <div id="pnlEntry">—</div>
+        <!-- NEW: horizontally swipeable scroller with 3 cards -->
+        <div class="pnl-scroller" id="pnlScroller">
+          <!-- Card 1 (keeps original IDs so existing JS continues to fill it) -->
+          <div class="pnl-card bg1" id="pnlCard">
+            <div class="card-header">
+              <div class="avatar">
+                <img src="https://iili.io/Kese3ox.th.png" alt="User Avatar">
               </div>
-              <div class="last">
-                <div class="label">Last Price</div>
-                <div id="pnlLast">—</div>
+              <div class="username">
+                <span id="pnlUser">Prasadnuwankumara</span>
+                <span id="pnlTime">—</span>
               </div>
             </div>
-          </div>
 
-          <div class="card-footer">
-            <span class="footer-line"></span>
-            <div class="footer-content">
-              <div class="footer-left">
-                <div>
-                  <div class="binance-badge">
-                    <img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo">
-                    <span class="brand">BINANCE</span>
-                  </div>
-                  <div class="futures-ref">FUTURES</div>
-                  <div class="futures-ref">Referral Code 456516353</div>
+            <div class="card-body">
+              <div class="title" id="pnlTitle">—</div>
+              <div class="position">
+                <span class="side" id="pnlSide">—</span>
+                <span class="divider" aria-hidden="true"></span>
+                <span class="lev" id="pnlLev">—</span>
+              </div>
+              <div class="pnl"><span id="pnlValue">0.00</span> <span class="usdt">USDT</span></div>
+              <div class="prices">
+                <div class="entry">
+                  <div class="label">Entry Price</div>
+                  <div id="pnlEntry">—</div>
+                </div>
+                <div class="last">
+                  <div class="label">Last Price</div>
+                  <div id="pnlLast">—</div>
                 </div>
               </div>
-              <div class="qr">
-                <img src="https://iili.io/KnWf8xt.png" alt="QR Code">
+            </div>
+
+            <div class="card-footer">
+              <span class="footer-line"></span>
+              <div class="footer-content">
+                <div class="footer-left">
+                  <div>
+                    <div class="binance-badge">
+                      <img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo">
+                      <span class="brand">BINANCE</span>
+                    </div>
+                    <div class="futures-ref">FUTURES</div>
+                    <div class="futures-ref">Referral Code 456516353</div>
+                  </div>
+                </div>
+                <div class="qr">
+                  <img src="https://iili.io/KnWf8xt.png" alt="QR Code">
+                </div>
               </div>
             </div>
           </div>
-        </div>
+
+          <!-- Card 2 (no IDs; will mirror content from Card 1) -->
+          <div class="pnl-card bg2">
+            <div class="card-header">
+              <div class="avatar"><img src="https://iili.io/Kese3ox.th.png" alt="User Avatar"></div>
+              <div class="username"><span class="u1">—</span><span class="u2">—</span></div>
+            </div>
+            <div class="card-body">
+              <div class="title t">—</div>
+              <div class="position"><span class="side s">—</span><span class="divider" aria-hidden="true"></span><span class="lev l">—</span></div>
+              <div class="pnl"><span class="pv">0.00</span> <span class="usdt">USDT</span></div>
+              <div class="prices">
+                <div class="entry"><div class="label">Entry Price</div><div class="e">—</div></div>
+                <div class="last"><div class="label">Last Price</div><div class="lp">—</div></div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="footer-line"></span>
+              <div class="footer-content">
+                <div class="footer-left">
+                  <div>
+                    <div class="binance-badge"><img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo"><span class="brand">BINANCE</span></div>
+                    <div class="futures-ref">FUTURES</div>
+                    <div class="futures-ref">Referral Code 456516353</div>
+                  </div>
+                </div>
+                <div class="qr"><img src="https://iili.io/KnWf8xt.png" alt="QR Code"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 (GIF background) -->
+          <div class="pnl-card bg3">
+            <div class="card-header">
+              <div class="avatar"><img src="https://iili.io/Kese3ox.th.png" alt="User Avatar"></div>
+              <div class="username"><span class="u1">—</span><span class="u2">—</span></div>
+            </div>
+            <div class="card-body">
+              <div class="title t">—</div>
+              <div class="position"><span class="side s">—</span><span class="divider" aria-hidden="true"></span><span class="lev l">—</span></div>
+              <div class="pnl"><span class="pv">0.00</span> <span class="usdt">USDT</span></div>
+              <div class="prices">
+                <div class="entry"><div class="label">Entry Price</div><div class="e">—</div></div>
+                <div class="last"><div class="label">Last Price</div><div class="lp">—</div></div>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="footer-line"></span>
+              <div class="footer-content">
+                <div class="footer-left">
+                  <div>
+                    <div class="binance-badge"><img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo"><span class="brand">BINANCE</span></div>
+                    <div class="futures-ref">FUTURES</div>
+                    <div class="futures-ref">Referral Code 456516353</div>
+                  </div>
+                </div>
+                <div class="qr"><img src="https://iili.io/KnWf8xt.png" alt="QR Code"></div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /pnl-scroller -->
 
         <div class="pnl-underbar">
           <div class="selector">
@@ -773,7 +802,6 @@
     const feedDiv = document.getElementById('feed');
     function meterBars(){ const totalBars = 4; const greenBars = Math.floor(Math.random() * totalBars) + 1; let html=''; for(let j=0;j<totalBars;j++) html += `<span class="${j<greenBars?'green':''}"></span>`; return html; }
 
-    /* ===== CREATE PANEL with SLIDE STRUCTURE ===== */
     function createPanel({ sym, leverage, entry, mark, usedMargin, effMargin, mmr, qty, side, marginMode }) {
       const pnl = side === 'LONG' ? upnlLong(mark, entry, qty) : upnlShort(mark, entry, qty);
       const roi = roiPct(pnl, usedMargin);
@@ -783,80 +811,65 @@
       const liq = side === 'LONG' ? liqPriceLong(entry, leverage, mmr, usedMargin, effMargin) : liqPriceShort(entry, leverage, mmr, usedMargin, effMargin);
       const sideIcon = side === 'LONG' ? '<span class="icon-buy">B</span>' : '<span class="icon-sell">S</span>';
       const sizeUSDT = mark * qty;
-
       const panel = document.createElement('div');
       panel.className = 'trade-panel';
       panel.innerHTML = `
-        <div class="slide-wrap">
-          <div class="slide-actions">
-            <button class="act share">Share</button>
-            <button class="act tpl">TP / SL</button>
-            <button class="act close">Close</button>
-          </div>
-          <div class="slide-content">
-            <div class="header">
-              ${sideIcon}
-              <span class="symbol">${sym}</span>
-              <span class="tag">PERP</span>
-              <span class="tag">${marginMode} ${leverage}×</span>
-              <span class="exclamations">${meterBars()}</span>
-              <i class="fas fa-share-nodes share" title="Share PNL"></i>
+        <div class="header">
+          ${sideIcon}
+          <span class="symbol">${sym}</span>
+          <span class="tag">PERP</span>
+          <span class="tag">${marginMode} ${leverage}×</span>
+          <span class="exclamations">${meterBars()}</span>
+          <i class="fas fa-share-nodes share" title="Share PNL"></i>
+        </div>
+        <div class="content-columns">
+          <div class="column">
+            <div class="stat">
+              <div class="label">PNL (USDT)</div>
+              <div class="value pnl ${pnl < 0 ? 'red' : 'green'}">${formatSignedProfit(sym, pnl)}</div>
             </div>
-            <div class="content-columns">
-              <div class="column">
-                <div class="stat">
-                  <div class="label">PNL (USDT)</div>
-                  <div class="value pnl ${pnl < 0 ? 'red' : 'green'}">${formatSignedProfit(sym, pnl)}</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Size (USDT)</div>
-                  <div class="value size">${formatTwoDP(sizeUSDT)}</div>
-                </div>
-                <div class="stat">
-                  <div class="label">Entry Price (USDT)</div>
-                  <div class="value entry">${formatPrice(sym, entry)}</div>
-                </div>
-              </div>
-              <div class="column center">
-                <div class="stat">
-                  <div class="label no-line">Margin (USDT)</div>
-                  <div class="value margin">${formatTwoDP(usedMargin)}</div>
-                </div>
-                <div class="stat">
-                  <div class="label no-line">Mark Price (USDT)</div>
-                  <div class="value mark">${formatPrice(sym, mark)}</div>
-                </div>
-              </div>
-              <div class="column right">
-                <div class="stat">
-                  <div class="label">ROI</div>
-                  <div class="value percent roi ${roi < 0 ? 'red' : 'green'}">${(roi >= 0 ? '+' : '') + toFixedSafe(roi, 2)}%</div>
-                </div>
-                <div class="stat margin-ratio">
-                  <div class="label">Margin Ratio</div>
-                  <div class="value percent margin-ratio-value ${mRatio >= 80 ? 'red' : 'green'}">${toFixedSafe(mRatio, 2)}%</div>
-                </div>
-                <div class="stat">
-                  <div class="label no-line">Liq. Price (USDT)</div>
-                  <div class="value liq">${liq === null ? '—' : formatPrice(sym, liq)}</div>
-                </div>
-              </div>
+            <div class="stat">
+              <div class="label">Size (USDT)</div>
+              <div class="value size">${formatTwoDP(sizeUSDT)}</div>
             </div>
-            <div class="tp-actions">
-              <button class="tp-btn">Leverage</button>
-              <button class="tp-btn">TP/SL</button>
-              <button class="tp-btn">Close</button>
-              <button class="tp-btn">Reverse</button>
+            <div class="stat">
+              <div class="label">Entry Price (USDT)</div>
+              <div class="value entry">${formatPrice(sym, entry)}</div>
             </div>
           </div>
+          <div class="column center">
+            <div class="stat">
+              <div class="label no-line">Margin (USDT)</div>
+              <div class="value margin">${formatTwoDP(usedMargin)}</div>
+            </div>
+            <div class="stat">
+              <div class="label no-line">Mark Price (USDT)</div>
+              <div class="value mark">${formatPrice(sym, mark)}</div>
+            </div>
+          </div>
+          <div class="column right">
+            <div class="stat">
+              <div class="label">ROI</div>
+              <div class="value percent roi ${roi < 0 ? 'red' : 'green'}">${(roi >= 0 ? '+' : '') + toFixedSafe(roi, 2)}%</div>
+            </div>
+            <div class="stat margin-ratio">
+              <div class="label">Margin Ratio</div>
+              <div class="value percent margin-ratio-value ${mRatio >= 80 ? 'red' : 'green'}">${toFixedSafe(mRatio, 2)}%</div>
+            </div>
+            <div class="stat">
+              <div class="label no-line">Liq. Price (USDT)</div>
+              <div class="value liq">${liq === null ? '—' : formatPrice(sym, liq)}</div>
+            </div>
+          </div>
+        </div>
+        <div class="tp-actions">
+          <button class="tp-btn">Leverage</button>
+          <button class="tp-btn">TP/SL</button>
+          <button class="tp-btn">Close</button>
+          <button class="tp-btn">Reverse</button>
         </div>`;
-      const panelState = { node: panel, sym, leverage, mmr, entry, usedMargin, effMargin, qty, mark, side, marginMode, lockLoss:false, slideX:0 };
-      /* Keep existing share icon behaviour */
-      panel.querySelector('.fa-share-nodes').addEventListener('click', ()=> openPNLModal(panelState));
-      /* Also map action buttons */
-      panel.querySelector('.slide-actions .share').addEventListener('click', ()=> openPNLModal(panelState));
-      // (TP/SL, Close) are placeholders to match real card feel
-      makeSwipeable(panelState); /* <<< enable inner slide */
+      const panelState = { node: panel, sym, leverage, mmr, entry, usedMargin, effMargin, qty, mark, side, marginMode, lockLoss:false };
+      panel.querySelector('.share').addEventListener('click', ()=> openPNLModal(panelState));
       return panelState;
     }
 
@@ -867,16 +880,14 @@
       const mBal = marginBalanceCalc(t.effMargin, pnl);
       const mRatio = marginRatioPct(maintV, mBal);
       const liq = (t.side === 'LONG') ? liqPriceLong(t.entry, t.leverage, t.mmr, t.usedMargin, t.effMargin) : liqPriceShort(t.entry, t.leverage, t.mmr, t.usedMargin, t.effMargin);
+      const pnlEl = t.node.querySelector('.value.pnl'); pnlEl.textContent = formatSignedProfit(t.sym, pnl); pnlEl.classList.toggle('green', pnl >= 0); pnlEl.classList.toggle('red', pnl < 0);
+      t.node.querySelector('.value.mark').textContent = formatPrice(t.sym, t.mark);
+      const sizeEl = t.node.querySelector('.value.size'); sizeEl.textContent = formatTwoDP(t.mark * t.qty);
+      const roiEl = t.node.querySelector('.value.roi'); roiEl.textContent = (roi >= 0 ? '+' : '') + toFixedSafe(roi, 2) + '%'; roiEl.classList.toggle('green', roi >= 0); roiEl.classList.toggle('red', roi < 0);
+      const mrEl = t.node.querySelector('.value.margin-ratio-value'); mrEl.textContent = toFixedSafe(mRatio, 2) + '%'; mrEl.classList.toggle('green', mRatio < 80); mrEl.classList.toggle('red', mRatio >= 80);
+      const liqEl = t.node.querySelector('.value.liq'); liqEl.textContent = (liq === null) ? '—' : formatPrice(t.sym, liq);
 
-      const root = t.node;
-      const pnlEl = root.querySelector('.value.pnl'); pnlEl.textContent = formatSignedProfit(t.sym, pnl); pnlEl.classList.toggle('green', pnl >= 0); pnlEl.classList.toggle('red', pnl < 0);
-      root.querySelector('.value.mark').textContent = formatPrice(t.sym, t.mark);
-      const sizeEl = root.querySelector('.value.size'); sizeEl.textContent = formatTwoDP(t.mark * t.qty);
-      const roiEl = root.querySelector('.value.roi'); roiEl.textContent = (roi >= 0 ? '+' : '') + toFixedSafe(roi, 2) + '%'; roiEl.classList.toggle('green', roi >= 0); roiEl.classList.toggle('red', roi < 0);
-      const mrEl = root.querySelector('.value.margin-ratio-value'); mrEl.textContent = toFixedSafe(mRatio, 2) + '%'; mrEl.classList.toggle('green', mRatio < 80); mrEl.classList.toggle('red', mRatio >= 80);
-      const liqEl = root.querySelector('.value.liq'); liqEl.textContent = (liq === null) ? '—' : formatPrice(t.sym, liq);
-
-      if (currentSharedTrade === t) updatePNLCardFromTrade(t);
+      if (currentSharedTrade === t) { updatePNLCardFromTrade(t); syncScrollerCards(); }
     }
 
     function sixMonthsAgoMs(){ const d=new Date(); d.setMonth(d.getMonth()-6); d.setHours(0,0,0,0); return d.getTime(); }
@@ -910,6 +921,7 @@
       // Try to restore persisted trades (keeps ENTRY & MARGINS unchanged)
       const saved = loadTrades();
       if (saved && saved.length){
+        // Create panels from saved data
         for (const s of saved){
           if(!marketMeta[s.sym] || !isFinite(markMap[s.sym])) continue;
           const panelState = createPanel({
@@ -928,10 +940,10 @@
           feedDiv.appendChild(panelState.node);
         }
         shuffleFeed(); sizeFeed();
-        return;
+        return; // Done (no reseeding)
       }
 
-      // First-time seed
+      // First-time seed → generate entries from 6M close, then persist
       symbols = symbols.filter(s=>!!marketMeta[s]);
       const poolForEntry=Array.from(new Set([...primeSymbols, ...symbols.slice(0, tradeCount*2)]));
       const entryMap=await loadSixMonthEntryMap(poolForEntry);
@@ -970,6 +982,7 @@
       }
       shuffleFeed(); sizeFeed();
 
+      // Optional: only once apply two tiny random losses
       try{
         if(!localStorage.getItem(STORAGE_LOSS_FLAG)){
           forceTwoSmallLossesRandom();
@@ -977,6 +990,7 @@
         }
       }catch{}
 
+      // Persist the generated trades so entry & margin never change after refresh
       saveTrades();
     }
 
@@ -1066,6 +1080,7 @@
       const ts = nowStamp();
       pnlEls.time.innerHTML = formatTimeWithTinyMonthOne(ts);
       updatePNLCardFromTrade(trade);
+      syncScrollerCards();
       pnlEls.backdrop.classList.add('open');
       pnlEls.backdrop.setAttribute('aria-hidden','false');
     }
@@ -1077,7 +1092,7 @@
     pnlEls.backdrop.addEventListener('click', (e)=>{ if(e.target === pnlEls.backdrop) closePNLModal(); });
 
     document.querySelectorAll('input[name="infoMode"]').forEach(r=>{
-      r.addEventListener('change', ()=>{ if(currentSharedTrade) updatePNLCardFromTrade(currentSharedTrade); });
+      r.addEventListener('change', ()=>{ if(currentSharedTrade) { updatePNLCardFromTrade(currentSharedTrade); syncScrollerCards(); } });
     });
 
     function updatePNLCardFromTrade(t){
@@ -1104,14 +1119,84 @@
       pnlEls.last.textContent  = formatPrice(t.sym, t.mark);
     }
 
+    /* NEW: mirror Card 1 content into Card 2 & 3 so all three look the same (only backgrounds differ) */
+    function syncScrollerCards(){
+      const scroller = document.getElementById('pnlScroller');
+      const cards = scroller.querySelectorAll('.pnl-card');
+      if(cards.length < 3) return;
+      const c1 = document.getElementById('pnlCard');
+      const headerHTML = c1.querySelector('.card-header').innerHTML;
+      const bodyHTML   = c1.querySelector('.card-body').innerHTML;
+      const footerHTML = c1.querySelector('.card-footer').innerHTML;
+      // Fill other cards
+      cards.forEach((card, idx)=>{
+        if(card.id==='pnlCard') return;
+        card.querySelector('.card-header').innerHTML = headerHTML;
+        card.querySelector('.card-body').innerHTML   = bodyHTML;
+        card.querySelector('.card-footer').innerHTML = footerHTML;
+      });
+      // re-wrap '1' glyph on all cards (handled by wrapper below on next frame)
+      requestAnimationFrame(()=>wrapOnesAll());
+    }
+
+    /* NEW: drag-to-scroll (mouse/touch) on the scroller and from inside the card */
+    (function(){
+      const scroller = document.getElementById('pnlScroller');
+      let isDown=false, startX=0, startLeft=0, moved=false;
+
+      function down(e){
+        isDown=true; moved=false;
+        startX = (e.touches ? e.touches[0].pageX : e.pageX);
+        startLeft = scroller.scrollLeft;
+      }
+      function move(e){
+        if(!isDown) return;
+        const x = (e.touches ? e.touches[0].pageX : e.pageX);
+        const dx = x - startX;
+        if(Math.abs(dx) > 2) moved=true;
+        scroller.scrollLeft = startLeft - dx;
+        e.preventDefault();
+      }
+      function up(){ isDown=false; }
+
+      scroller.addEventListener('mousedown', down, {passive:false});
+      scroller.addEventListener('mousemove', move, {passive:false});
+      scroller.addEventListener('mouseup', up);
+      scroller.addEventListener('mouseleave', up);
+      scroller.addEventListener('touchstart', down, {passive:false});
+      scroller.addEventListener('touchmove', move, {passive:false});
+      scroller.addEventListener('touchend', up);
+
+      // Allow starting drag from inside any child (card/body/etc.)
+      scroller.querySelectorAll('*').forEach(el=>{
+        el.addEventListener('mousedown', (e)=>{ if(e.button===0) down(e); }, {passive:false});
+        el.addEventListener('touchstart', down, {passive:false});
+      });
+    })();
+
+    function setBottomInset(){
+      const nav = document.getElementById('bottomNav');
+      const h = nav ? Math.max(56, Math.ceil(nav.getBoundingClientRect().height)) : 64;
+      document.documentElement.style.setProperty('--bottom-nav-h', h + 'px');
+    }
+
+    /* Save only the currently visible card (nearest to center) */
+    function getActiveCard(){
+      const scroller = document.getElementById('pnlScroller');
+      const cards = Array.from(scroller.querySelectorAll('.pnl-card'));
+      if(!cards.length) return null;
+      const gap = 14;
+      const cardW = cards[0].getBoundingClientRect().width;
+      const idx = Math.round(scroller.scrollLeft / (cardW + gap));
+      return cards[Math.max(0, Math.min(cards.length-1, idx))];
+    }
     function setupSaveOnlyCard() {
       const saveBtn = Array.from(document.querySelectorAll('#pnlActions .action')).find(a => a.getAttribute('title') === 'Save');
       if(!saveBtn) return;
       saveBtn.addEventListener('click', async () => {
-        const card = document.getElementById('pnlCard');
-        if(!card){ return; }
+        const activeCard = getActiveCard() || document.getElementById('pnlCard');
         try{
-          const canvas = await html2canvas(card, {useCORS:true, scale:2, backgroundColor:null});
+          const canvas = await html2canvas(activeCard, {useCORS:true, scale:2, backgroundColor:null});
           const dataURL = canvas.toDataURL('image/png');
           const a = document.createElement('a');
           a.href = dataURL;
@@ -1122,73 +1207,6 @@
         }catch(e){
           alert('Save failed. Please try again.');
         }
-      });
-    }
-
-    /* ====== NEW: swipe-to-reveal logic (like real Binance) ====== */
-    function makeSwipeable(t){
-      const root = t.node;
-      const content = root.querySelector('.slide-content');
-      const actions = root.querySelector('.slide-actions');
-      if(!content || !actions) return;
-
-      const MAX = actions.getBoundingClientRect().width || parseInt(getComputedStyle(actions).width) || 168;
-      let startX=0, current=0, dragging=false, vx=0, lastT=0, lastX=0;
-
-      function setX(px){
-        t.slideX = Math.max(-MAX, Math.min(0, px));
-        content.style.transform = `translate3d(${t.slideX}px,0,0)`;
-      }
-      function onStart(clientX){
-        dragging=true; startX=clientX - t.slideX; vx=0; lastT=performance.now(); lastX=clientX;
-        root.classList.add('sliding');
-      }
-      function onMove(clientX){
-        if(!dragging) return;
-        const now=performance.now();
-        const dt = Math.max(1, now-lastT);
-        vx = (clientX - lastX) / dt;
-        lastT=now; lastX=clientX;
-
-        const next = clientX - startX;
-        setX(next);
-      }
-      function onEnd(){
-        if(!dragging) return;
-        dragging=false; root.classList.remove('sliding');
-
-        // Snap based on threshold & velocity
-        const thresholdOpen = -MAX*0.35;
-        const shouldOpen = (t.slideX < thresholdOpen) || (vx < -0.3);
-        const target = shouldOpen ? -MAX : 0;
-        content.style.transition = 'transform .18s cubic-bezier(.2,.7,.2,1)';
-        requestAnimationFrame(()=> setX(target));
-        setTimeout(()=> content.style.transition='', 200);
-      }
-
-      // Touch
-      content.addEventListener('touchstart', e=>{ const tch=e.touches[0]; onStart(tch.clientX); }, {passive:true});
-      content.addEventListener('touchmove',  e=>{ const tch=e.touches[0]; onMove(tch.clientX); }, {passive:true});
-      content.addEventListener('touchend',   onEnd, {passive:true});
-      content.addEventListener('touchcancel',onEnd, {passive:true});
-
-      // Mouse (desktop)
-      content.addEventListener('mousedown', e=>{ onStart(e.clientX); e.preventDefault(); });
-      window.addEventListener('mousemove', e=> onMove(e.clientX));
-      window.addEventListener('mouseup', onEnd);
-
-      // Clicking content closes if open
-      content.addEventListener('click', ()=>{
-        if (t.slideX !== 0){
-          setX(0);
-        }
-      });
-
-      // Action buttons close after action
-      actions.querySelectorAll('button').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          setX(0);
-        });
       });
     }
 
@@ -1226,57 +1244,57 @@
     document.getElementById("realizedSpan").textContent = "Loading…";
   </script>
 
-  <!-- ========= ONE-GLYPH PATCH (force digit `1` inside pnl-card to Binance PLEX) ========= -->
+  <!-- ========= ONE-GLYPH PATCH (force digit `1` inside pnl-cards to Binance PLEX) ========= -->
   <script>
-    (function(){
-      const pnlCard = document.getElementById('pnlCard');
-      if(!pnlCard) return;
-
-      function wrapOnes(root){
-        const walker = document.createTreeWalker(
-          root,
-          NodeFilter.SHOW_TEXT,
-          {
-            acceptNode: (node) => {
-              if (!node.nodeValue || node.nodeValue.indexOf('1') === -1) return NodeFilter.FILTER_REJECT;
-              const p = node.parentNode;
-              if (!p || p.classList && p.classList.contains('one-glyph')) return NodeFilter.FILTER_REJECT;
-              if (p.closest && p.closest('.no-one-stylize')) return NodeFilter.FILTER_REJECT;
-              return NodeFilter.FILTER_ACCEPT;
+    function wrapOnesAll(){
+      document.querySelectorAll('.pnl-card').forEach(pnlCard => {
+        if(!pnlCard) return;
+        function wrapOnes(root){
+          const walker = document.createTreeWalker(
+            root,
+            NodeFilter.SHOW_TEXT,
+            {
+              acceptNode: (node) => {
+                if (!node.nodeValue || node.nodeValue.indexOf('1') === -1) return NodeFilter.FILTER_REJECT;
+                const p = node.parentNode;
+                if (!p || p.classList && p.classList.contains('one-glyph')) return NodeFilter.FILTER_REJECT;
+                if (p.closest && p.closest('.no-one-stylize')) return NodeFilter.FILTER_REJECT;
+                return NodeFilter.FILTER_ACCEPT;
+              }
             }
-          }
-        );
-        const nodes = [];
-        while (walker.nextNode()) nodes.push(walker.currentNode);
+          );
+          const nodes = [];
+          while (walker.nextNode()) nodes.push(walker.currentNode);
 
-        nodes.forEach(node => {
-          const txt = node.nodeValue;
-          if (!txt || txt.indexOf('1') === -1) return;
-          const frag = document.createDocumentFragment();
-          for (let i=0;i<txt.length;i++){
-            const ch = txt[i];
-            if (ch === '1'){
-              const span = document.createElement('span');
-              span.className = 'one-glyph';
-              span.textContent = '1';
-              frag.appendChild(span);
-            } else {
-              frag.appendChild(document.createTextNode(ch));
+          nodes.forEach(node => {
+            const txt = node.nodeValue;
+            if (!txt || txt.indexOf('1') === -1) return;
+            const frag = document.createDocumentFragment();
+            for (let i=0;i<txt.length;i++){
+              const ch = txt[i];
+              if (ch === '1'){
+                const span = document.createElement('span');
+                span.className = 'one-glyph';
+                span.textContent = '1';
+                frag.appendChild(span);
+              } else {
+                frag.appendChild(document.createTextNode(ch));
+              }
             }
-          }
-          node.parentNode.replaceChild(frag, node);
+            node.parentNode.replaceChild(frag, node);
+          });
+        }
+        wrapOnes(pnlCard);
+        let timer = null;
+        const mo = new MutationObserver(() => {
+          if (timer) cancelAnimationFrame(timer);
+          timer = requestAnimationFrame(()=> wrapOnes(pnlCard));
         });
-      }
-
-      wrapOnes(pnlCard);
-
-      let timer = null;
-      const mo = new MutationObserver(() => {
-        if (timer) cancelAnimationFrame(timer);
-        timer = requestAnimationFrame(()=> wrapOnes(pnlCard));
+        mo.observe(pnlCard, {subtree:true, childList:true, characterData:true});
       });
-      mo.observe(pnlCard, {subtree:true, childList:true, characterData:true});
-    })();
+    }
+    // initial pass
+    document.addEventListener('DOMContentLoaded', ()=>wrapOnesAll());
   </script>
 </body>
 </html>
