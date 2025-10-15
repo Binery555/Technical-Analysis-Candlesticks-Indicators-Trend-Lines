@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -44,6 +44,10 @@
 
       --scene-offset-x: -0.5cm;
       --scene-offset-y: 1.1cm;
+
+      /* ✅ Footer badge alignment helpers */
+      --badge-icon: 16px;   /* logo size */
+      --badge-gap: 8px;     /* gap between logo and BINANCE text */
     }
 
     *{margin:0;padding:0;box-sizing:border-box}
@@ -186,25 +190,9 @@
       background:transparent; border-radius:4px;
     }
     .photo-slot--bottom{ width:var(--slot-bottom); height:var(--slot-bottom); border-radius:3px; }
-    .photo-slot input[type="file"]{
-      position:absolute; inset:0; opacity:0; cursor:pointer;
-    }
-    .photo-slot img{
-      width:88%;
-      height:88%;
-      margin:6%;
-      object-fit:cover;
-      display:block;
-      border:none; outline:none; background:transparent;
-      image-rendering:auto;
-    }
-    .photo-slot--bottom img{
-      width:90%;
-      height:90%;
-      margin:5%;
-      object-fit:cover;
-      display:block;
-    }
+    .photo-slot input[type="file"]{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+    .photo-slot img{ width:88%; height:88%; margin:6%; object-fit:cover; display:block; border:none; outline:none; background:transparent; image-rendering:auto; }
+    .photo-slot--bottom img{ width:90%; height:90%; margin:5%; object-fit:cover; display:block; }
     .photo-empty::after{ content:''; position:absolute; inset:0; background:transparent; }
 
     .pnl-modal-backdrop{
@@ -228,40 +216,30 @@
       align-items:center;
       box-shadow:0 8px 20px rgba(0,0,0,.35) inset;
       transform: translate(var(--scene-offset-x), var(--scene-offset-y));
+      overflow:hidden;
     }
 
-    /* NEW: drag-to-slide scroller with snap; no visible scrollbar */
-    .pnl-scroller{
-      width:100%;
-      display:flex;
-      gap:14px;
-      overflow-x:auto;
-      -webkit-overflow-scrolling: touch;
-      scroll-snap-type:x mandatory;
-      scrollbar-width:none;
-      cursor:grab;
-      padding-bottom:6px;
-    }
-    .pnl-scroller:active{ cursor:grabbing; }
-    .pnl-scroller::-webkit-scrollbar{ display:none; }
+    /* Inner swipeable carousel */
+    .pnl-carousel{ width:calc(350px - 1cm); overflow:hidden; touch-action:pan-y; cursor:grab; }
+    .pnl-carousel.grabbing{ cursor:grabbing; }
+    .pnl-track{ display:flex; width:300%; will-change:transform; transition:transform .25s ease; }
+    .pnl-slide{ width:calc(350px - 1cm); flex:0 0 calc(350px - 1cm); padding:0; }
 
     .pnl-card {
       font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif !important;
       font-feature-settings:"tnum"1,"lnum"1;
       letter-spacing:.15px;
       color:#fff;
-      background:#000 center/cover no-repeat;
       border-radius:16px;
-      width:calc(350px - 1cm);
+      width:100%;
       overflow:hidden;
       box-shadow:0 0 10px rgba(0,0,0,.6);
       border:2px solid #2e2e2e;
       position:relative;
       margin:0 auto;
-      flex:0 0 calc(350px - 1cm);
-      scroll-snap-align:center;
+      background:#000 center/cover no-repeat; /* default, overridden per slide */
     }
-    /* Apply your 3 backgrounds */
+    /* 🔰 Backgrounds per slide (your 3 images) */
     .pnl-card.bg1{ background-image:url('https://iili.io/KBlgIse.th.png'); }
     .pnl-card.bg2{ background-image:url('https://iili.io/KWFNXj4.th.png'); }
     .pnl-card.bg3{ background-image:url('https://iili.io/KesMjcb.md.gif'); }
@@ -282,17 +260,46 @@
     .pnl-card .pnl { color:#0ecb81; font-size:32px; font-weight:700; margin:8px 0; letter-spacing:-.5px; }
     .pnl-card .usdt { font-size:16px; margin-left:4px; font-weight:600; color:#fff; }
     .pnl-card .prices { display:flex; justify-content:space-between; font-size:12px; margin-top:8px; }
-    .pnl-card .prices .label { color:#888; font-size:11px; }
-    .pnl-card .prices .last { transform:translateX(-2.55cm); }
+    .pnl-card .prices .label { color:#ddd; font-size:11px; }
 
     .pnl-card .card-footer { background:#000; padding:0; display:block; position:relative; }
     .pnl-card .footer-line { display:block; width:100%; height:1px; background:#444; margin:0; }
     .pnl-card .footer-content { padding:16px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
-    .pnl-card .footer-left { font-size:12px; display:flex; align-items:center; gap:8px; line-height:1.1; }
-    .pnl-card .footer-left .binance-badge { display:inline-flex; align-items:center; gap:6px; margin-bottom:2px; transform:translateX(-.3cm); }
-    .pnl-card .footer-left .binance-badge img { width:16px; height:16px; }
-    .pnl-card .footer-left .binance-badge .brand { color:#fcd535; font-weight:800; }
-    .pnl-card .footer-left .futures-ref { transform:translateX(.3cm); }
+
+    /* ✅ Footer content base (kept) */
+    .pnl-card .footer-left{
+      font-size:12px; display:flex; align-items:center; gap:8px; line-height:1.1;
+      transform: translateX(-0.35cm);
+    }
+    .pnl-card .footer-left .binance-badge{
+      display:inline-flex; align-items:center; gap:var(--badge-gap);
+      margin-bottom:2px;
+    }
+    .pnl-card .footer-left .binance-badge img{ width:var(--badge-icon); height:var(--badge-icon); }
+
+    .pnl-card .footer-left .binance-badge .brand{
+      color:#fcd535; font-weight:800; letter-spacing:0;
+      margin-left:0;
+    }
+    /* ✅ Make "FUTURES" and "Referral…" start exactly under BINANCE's 'B' */
+    .pnl-card .footer-left .futures-ref{
+      color:#fff;
+      padding-left: calc(var(--badge-icon) + var(--badge-gap));
+      text-indent: 0;
+      display:block;
+    }
+
+    /* === ✅ Your new tweaks === */
+    /* 1) Move ONLY the yellow Binance logo slightly to the RIGHT */
+    .pnl-card .footer-left .binance-badge img{
+      transform: translateX(0.12cm); /* << move logo a touch to right */
+    }
+    /* 2) Drop ONLY the “Referral Code 456516353” line slightly lower */
+    .pnl-card .footer-left .futures-ref:last-child{
+      margin-top: 0.10cm;       /* a bit more space under FUTURES */
+      transform: translateY(0); /* keep layout flow, just add margin */
+    }
+    /* ========================= */
 
     .pnl-card .qr { width:60px; height:60px; background:#fff; border-radius:6px; overflow:hidden; }
     .pnl-card .qr img { width:100%; height:100%; object-fit:cover; }
@@ -325,7 +332,6 @@
     }
     .no-one-stylize .one-glyph{ font-family: inherit !important; font-weight: inherit !important; }
 
-    /* >>> NEW: Month '1' tiny style (only the first digit of month) <<< */
     .pnl-card .month-one{
       font-size: .80em;
       line-height: 1;
@@ -458,120 +464,131 @@
   <div class="pnl-modal-backdrop" id="pnlBackdrop" aria-hidden="true">
     <div class="pnl-modal" role="dialog" aria-modal="true" aria-labelledby="pnlTitle">
       <div class="pnl-scene">
-        <!-- NEW: horizontally swipeable scroller with 3 cards -->
-        <div class="pnl-scroller" id="pnlScroller">
-          <!-- Card 1 (keeps original IDs so existing JS continues to fill it) -->
-          <div class="pnl-card bg1" id="pnlCard">
-            <div class="card-header">
-              <div class="avatar">
-                <img src="https://iili.io/Kese3ox.th.png" alt="User Avatar">
-              </div>
-              <div class="username">
-                <span id="pnlUser">Prasadnuwankumara</span>
-                <span id="pnlTime">—</span>
-              </div>
-            </div>
 
-            <div class="card-body">
-              <div class="title" id="pnlTitle">—</div>
-              <div class="position">
-                <span class="side" id="pnlSide">—</span>
-                <span class="divider" aria-hidden="true"></span>
-                <span class="lev" id="pnlLev">—</span>
-              </div>
-              <div class="pnl"><span id="pnlValue">0.00</span> <span class="usdt">USDT</span></div>
-              <div class="prices">
-                <div class="entry">
-                  <div class="label">Entry Price</div>
-                  <div id="pnlEntry">—</div>
-                </div>
-                <div class="last">
-                  <div class="label">Last Price</div>
-                  <div id="pnlLast">—</div>
-                </div>
-              </div>
-            </div>
+        <!-- 3-slide carousel -->
+        <div class="pnl-carousel" id="pnlCarousel">
+          <div class="pnl-track" id="pnlTrack">
 
-            <div class="card-footer">
-              <span class="footer-line"></span>
-              <div class="footer-content">
-                <div class="footer-left">
-                  <div>
-                    <div class="binance-badge">
-                      <img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo">
-                      <span class="brand">BINANCE</span>
+            <!-- Slide 1 (Primary / with IDs) -->
+            <div class="pnl-slide">
+              <div class="pnl-card bg1" id="pnlCard">
+                <div class="card-header">
+                  <div class="avatar">
+                    <img src="https://iili.io/Kese3ox.th.png" alt="User Avatar">
+                  </div>
+                  <div class="username">
+                    <span id="pnlUser">Prasadnuwankumara</span>
+                    <span id="pnlTime">—</span>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div class="title" id="pnlTitle">—</div>
+                  <div class="position">
+                    <span class="side" id="pnlSide">—</span>
+                    <span class="divider" aria-hidden="true"></span>
+                    <span class="lev" id="pnlLev">—</span>
+                  </div>
+                  <div class="pnl"><span id="pnlValue">0.00</span> <span class="usdt">USDT</span></div>
+                  <div class="prices">
+                    <div class="entry">
+                      <div class="label">Entry Price</div>
+                      <div id="pnlEntry">—</div>
                     </div>
-                    <div class="futures-ref">FUTURES</div>
-                    <div class="futures-ref">Referral Code 456516353</div>
+                    <div class="last">
+                      <div class="label">Last Price</div>
+                      <div id="pnlLast">—</div>
+                    </div>
                   </div>
                 </div>
-                <div class="qr">
-                  <img src="https://iili.io/KnWf8xt.png" alt="QR Code">
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <!-- Card 2 (no IDs; will mirror content from Card 1) -->
-          <div class="pnl-card bg2">
-            <div class="card-header">
-              <div class="avatar"><img src="https://iili.io/Kese3ox.th.png" alt="User Avatar"></div>
-              <div class="username"><span class="u1">—</span><span class="u2">—</span></div>
-            </div>
-            <div class="card-body">
-              <div class="title t">—</div>
-              <div class="position"><span class="side s">—</span><span class="divider" aria-hidden="true"></span><span class="lev l">—</span></div>
-              <div class="pnl"><span class="pv">0.00</span> <span class="usdt">USDT</span></div>
-              <div class="prices">
-                <div class="entry"><div class="label">Entry Price</div><div class="e">—</div></div>
-                <div class="last"><div class="label">Last Price</div><div class="lp">—</div></div>
-              </div>
-            </div>
-            <div class="card-footer">
-              <span class="footer-line"></span>
-              <div class="footer-content">
-                <div class="footer-left">
-                  <div>
-                    <div class="binance-badge"><img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo"><span class="brand">BINANCE</span></div>
-                    <div class="futures-ref">FUTURES</div>
-                    <div class="futures-ref">Referral Code 456516353</div>
+                <div class="card-footer">
+                  <span class="footer-line"></span>
+                  <div class="footer-content">
+                    <div class="footer-left">
+                      <div>
+                        <div class="binance-badge">
+                          <img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo">
+                          <span class="brand">BINANCE</span>
+                        </div>
+                        <div class="futures-ref">FUTURES</div>
+                        <div class="futures-ref">Referral Code 456516353</div>
+                      </div>
+                    </div>
+                    <div class="qr">
+                      <img src="https://iili.io/KnWf8xt.png" alt="QR Code">
+                    </div>
                   </div>
                 </div>
-                <div class="qr"><img src="https://iili.io/KnWf8xt.png" alt="QR Code"></div>
               </div>
             </div>
-          </div>
 
-          <!-- Card 3 (GIF background) -->
-          <div class="pnl-card bg3">
-            <div class="card-header">
-              <div class="avatar"><img src="https://iili.io/Kese3ox.th.png" alt="User Avatar"></div>
-              <div class="username"><span class="u1">—</span><span class="u2">—</span></div>
-            </div>
-            <div class="card-body">
-              <div class="title t">—</div>
-              <div class="position"><span class="side s">—</span><span class="divider" aria-hidden="true"></span><span class="lev l">—</span></div>
-              <div class="pnl"><span class="pv">0.00</span> <span class="usdt">USDT</span></div>
-              <div class="prices">
-                <div class="entry"><div class="label">Entry Price</div><div class="e">—</div></div>
-                <div class="last"><div class="label">Last Price</div><div class="lp">—</div></div>
-              </div>
-            </div>
-            <div class="card-footer">
-              <span class="footer-line"></span>
-              <div class="footer-content">
-                <div class="footer-left">
-                  <div>
-                    <div class="binance-badge"><img src="https://iili.io/KBDmWsn.th.png" alt="Binance logo"><span class="brand">BINANCE</span></div>
-                    <div class="futures-ref">FUTURES</div>
-                    <div class="futures-ref">Referral Code 456516353</div>
+            <!-- Slide 2 (Clone, auto-synced) -->
+            <div class="pnl-slide">
+              <div class="pnl-card bg2">
+                <div class="card-header">
+                  <div class="avatar"><img src="https://iili.io/Kese3ox.th.png" alt=""></div>
+                  <div class="username"><span class="js-user">—</span><span class="js-time">—</span></div>
+                </div>
+                <div class="card-body">
+                  <div class="title js-title">—</div>
+                  <div class="position"><span class="side js-side">—</span><span class="divider"></span><span class="lev js-lev">—</span></div>
+                  <div class="pnl"><span class="js-pnl">0.00</span> <span class="usdt">USDT</span></div>
+                  <div class="prices">
+                    <div class="entry"><div class="label">Entry Price</div><div class="js-entry">—</div></div>
+                    <div class="last"><div class="label">Last Price</div><div class="js-last">—</div></div>
                   </div>
                 </div>
-                <div class="qr"><img src="https://iili.io/KnWf8xt.png" alt="QR Code"></div>
+                <div class="card-footer">
+                  <span class="footer-line"></span>
+                  <div class="footer-content">
+                    <div class="footer-left">
+                      <div>
+                        <div class="binance-badge"><img src="https://iili.io/KBDmWsn.th.png" alt=""><span class="brand">BINANCE</span></div>
+                        <div class="futures-ref">FUTURES</div>
+                        <div class="futures-ref">Referral Code 456516353</div>
+                      </div>
+                    </div>
+                    <div class="qr"><img src="https://iili.io/KnWf8xt.png" alt=""></div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div><!-- /pnl-scroller -->
+
+            <!-- Slide 3 (Clone, auto-synced) -->
+            <div class="pnl-slide">
+              <div class="pnl-card bg3">
+                <div class="card-header">
+                  <div class="avatar"><img src="https://iili.io/Kese3ox.th.png" alt=""></div>
+                  <div class="username"><span class="js-user">—</span><span class="js-time">—</span></div>
+                </div>
+                <div class="card-body">
+                  <div class="title js-title">—</div>
+                  <div class="position"><span class="side js-side">—</span><span class="divider"></span><span class="lev js-lev">—</span></div>
+                  <div class="pnl"><span class="js-pnl">0.00</span> <span class="usdt">USDT</span></div>
+                  <div class="prices">
+                    <div class="entry"><div class="label">Entry Price</div><div class="js-entry">—</div></div>
+                    <div class="last"><div class="label">Last Price</div><div class="js-last">—</div></div>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <span class="footer-line"></span>
+                  <div class="footer-content">
+                    <div class="footer-left">
+                      <div>
+                        <div class="binance-badge"><img src="https://iili.io/KBDmWsn.th.png" alt=""><span class="brand">BINANCE</span></div>
+                        <div class="futures-ref">FUTURES</div>
+                        <div class="futures-ref">Referral Code 456516353</div>
+                      </div>
+                    </div>
+                    <div class="qr"><img src="https://iili.io/KnWf8xt.png" alt=""></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /pnl-track -->
+        </div><!-- /pnl-carousel -->
 
         <div class="pnl-underbar">
           <div class="selector">
@@ -653,8 +670,8 @@
     const quantizeToTick = (price, tickSize) => { const step = parseFloat(tickSize); if (!isFinite(price) || !isFinite(step) || step <= 0) return price; return Math.round(price / step) * step; };
     const quantizeDownToStep = (qty, stepSize) => { const step = parseFloat(stepSize); if (!isFinite(qty) || !isFinite(step) || step <= 0) return qty; return Math.floor(qty / step) * step; };
     function joinIntDec(i, d) { const I = numberWithCommas(i); return d !== undefined ? I + '.' + d : I; }
-    function shuffle(arr){ for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j]]; } return arr; }
-    const randInt = (min, max) => Math.floor(Math.random()*(max-min+1))+min;
+    function shuffle(arr){ for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
+    const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
     function formatProfit(_sym, x) {
       const s = toFixedSafe(x, 2);
@@ -713,10 +730,10 @@
     /* ===== Exchange / calculations / WS / panels ===== */
     const round2 = (x) => Math.round((Number(x)||0) * 100) / 100;
 
-    /*** >>> FIXED MARGIN BALANCE TARGET <<< ***/
-    const TARGET_MARGIN_BALANCE = 846591.62; // EXACT Main (Margin) Balance required
+    /*** FIXED MARGIN BALANCE TARGET ***/
+    const TARGET_MARGIN_BALANCE = 846591.62;
 
-    /*** >>> PERSISTENCE KEYS <<< ***/
+    /*** PERSISTENCE KEYS ***/
     const STORAGE_TRADES_KEY = 'fa_trades_v2';
     const STORAGE_LOSS_FLAG = 'fa_small_losses_applied_v2';
 
@@ -887,7 +904,7 @@
       const mrEl = t.node.querySelector('.value.margin-ratio-value'); mrEl.textContent = toFixedSafe(mRatio, 2) + '%'; mrEl.classList.toggle('green', mRatio < 80); mrEl.classList.toggle('red', mRatio >= 80);
       const liqEl = t.node.querySelector('.value.liq'); liqEl.textContent = (liq === null) ? '—' : formatPrice(t.sym, liq);
 
-      if (currentSharedTrade === t) { updatePNLCardFromTrade(t); syncScrollerCards(); }
+      if (currentSharedTrade === t) updatePNLCardFromTrade(t);
     }
 
     function sixMonthsAgoMs(){ const d=new Date(); d.setMonth(d.getMonth()-6); d.setHours(0,0,0,0); return d.getTime(); }
@@ -921,7 +938,6 @@
       // Try to restore persisted trades (keeps ENTRY & MARGINS unchanged)
       const saved = loadTrades();
       if (saved && saved.length){
-        // Create panels from saved data
         for (const s of saved){
           if(!marketMeta[s.sym] || !isFinite(markMap[s.sym])) continue;
           const panelState = createPanel({
@@ -982,7 +998,6 @@
       }
       shuffleFeed(); sizeFeed();
 
-      // Optional: only once apply two tiny random losses
       try{
         if(!localStorage.getItem(STORAGE_LOSS_FLAG)){
           forceTwoSmallLossesRandom();
@@ -990,7 +1005,6 @@
         }
       }catch{}
 
-      // Persist the generated trades so entry & margin never change after refresh
       saveTrades();
     }
 
@@ -1062,7 +1076,6 @@
       return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
     }
 
-    /* >>> NEW: format time so that only the FIRST digit of month (if '1') is tiny <<< */
     function formatTimeWithTinyMonthOne(ts){
       const m = ts.match(/^(\d{4})-(\d{2})-(\d{2}) (.+)$/);
       if(!m) return ts;
@@ -1073,6 +1086,27 @@
       return `${Y}-${mm}-${DD} ${rest}`;
     }
 
+    /* ✅ Sync clone slides so all 3 cards show the SAME info */
+    function syncCloneSlides(payload){
+      const cards = Array.from(document.querySelectorAll('.pnl-card')).filter(c=>c.id!=='pnlCard');
+      cards.forEach(card=>{
+        const set = (sel, val, html=false) => {
+          const el = card.querySelector(sel);
+          if(!el) return;
+          if(html) el.innerHTML = val; else el.textContent = val;
+        };
+        set('.js-user', payload.user);
+        set('.js-time', payload.timeHTML, true);
+        set('.js-title', payload.title);
+        set('.js-side', payload.sideText);
+        card.querySelector('.js-side').style.color = payload.sideColor;
+        set('.js-lev', payload.lev);
+        set('.js-pnl', payload.pnlText);
+        set('.js-entry', payload.entry);
+        set('.js-last', payload.last);
+      });
+    }
+
     function openPNLModal(trade){
       setBottomInset();
       currentSharedTrade = trade;
@@ -1080,9 +1114,11 @@
       const ts = nowStamp();
       pnlEls.time.innerHTML = formatTimeWithTinyMonthOne(ts);
       updatePNLCardFromTrade(trade);
-      syncScrollerCards();
       pnlEls.backdrop.classList.add('open');
       pnlEls.backdrop.setAttribute('aria-hidden','false');
+
+      // reset carousel to first slide each time
+      setSlide(0, true);
     }
     function closePNLModal(){
       pnlEls.backdrop.classList.remove('open');
@@ -1092,7 +1128,7 @@
     pnlEls.backdrop.addEventListener('click', (e)=>{ if(e.target === pnlEls.backdrop) closePNLModal(); });
 
     document.querySelectorAll('input[name="infoMode"]').forEach(r=>{
-      r.addEventListener('change', ()=>{ if(currentSharedTrade) { updatePNLCardFromTrade(currentSharedTrade); syncScrollerCards(); } });
+      r.addEventListener('change', ()=>{ if(currentSharedTrade) updatePNLCardFromTrade(currentSharedTrade); });
     });
 
     function updatePNLCardFromTrade(t){
@@ -1117,86 +1153,30 @@
       pnlEls.pnl.parentElement.style.color = (pnl >= 0) ? '#0ecb81' : '#e04b4a';
       pnlEls.entry.textContent = formatPrice(t.sym, t.entry);
       pnlEls.last.textContent  = formatPrice(t.sym, t.mark);
+
+      // 🔁 Mirror into clone slides so all 3 show the SAME content
+      const payload = {
+        user: usernameStatic,
+        timeHTML: pnlEls.time.innerHTML,
+        title: pnlEls.title.textContent,
+        sideText: sideTxt,
+        sideColor: (t.side === 'LONG') ? '#0ecb81' : '#ff6b6b',
+        lev: `${t.leverage}x`,
+        pnlText,
+        entry: pnlEls.entry.textContent,
+        last: pnlEls.last.textContent
+      };
+      syncCloneSlides(payload);
     }
 
-    /* NEW: mirror Card 1 content into Card 2 & 3 so all three look the same (only backgrounds differ) */
-    function syncScrollerCards(){
-      const scroller = document.getElementById('pnlScroller');
-      const cards = scroller.querySelectorAll('.pnl-card');
-      if(cards.length < 3) return;
-      const c1 = document.getElementById('pnlCard');
-      const headerHTML = c1.querySelector('.card-header').innerHTML;
-      const bodyHTML   = c1.querySelector('.card-body').innerHTML;
-      const footerHTML = c1.querySelector('.card-footer').innerHTML;
-      // Fill other cards
-      cards.forEach((card, idx)=>{
-        if(card.id==='pnlCard') return;
-        card.querySelector('.card-header').innerHTML = headerHTML;
-        card.querySelector('.card-body').innerHTML   = bodyHTML;
-        card.querySelector('.card-footer').innerHTML = footerHTML;
-      });
-      // re-wrap '1' glyph on all cards (handled by wrapper below on next frame)
-      requestAnimationFrame(()=>wrapOnesAll());
-    }
-
-    /* NEW: drag-to-scroll (mouse/touch) on the scroller and from inside the card */
-    (function(){
-      const scroller = document.getElementById('pnlScroller');
-      let isDown=false, startX=0, startLeft=0, moved=false;
-
-      function down(e){
-        isDown=true; moved=false;
-        startX = (e.touches ? e.touches[0].pageX : e.pageX);
-        startLeft = scroller.scrollLeft;
-      }
-      function move(e){
-        if(!isDown) return;
-        const x = (e.touches ? e.touches[0].pageX : e.pageX);
-        const dx = x - startX;
-        if(Math.abs(dx) > 2) moved=true;
-        scroller.scrollLeft = startLeft - dx;
-        e.preventDefault();
-      }
-      function up(){ isDown=false; }
-
-      scroller.addEventListener('mousedown', down, {passive:false});
-      scroller.addEventListener('mousemove', move, {passive:false});
-      scroller.addEventListener('mouseup', up);
-      scroller.addEventListener('mouseleave', up);
-      scroller.addEventListener('touchstart', down, {passive:false});
-      scroller.addEventListener('touchmove', move, {passive:false});
-      scroller.addEventListener('touchend', up);
-
-      // Allow starting drag from inside any child (card/body/etc.)
-      scroller.querySelectorAll('*').forEach(el=>{
-        el.addEventListener('mousedown', (e)=>{ if(e.button===0) down(e); }, {passive:false});
-        el.addEventListener('touchstart', down, {passive:false});
-      });
-    })();
-
-    function setBottomInset(){
-      const nav = document.getElementById('bottomNav');
-      const h = nav ? Math.max(56, Math.ceil(nav.getBoundingClientRect().height)) : 64;
-      document.documentElement.style.setProperty('--bottom-nav-h', h + 'px');
-    }
-
-    /* Save only the currently visible card (nearest to center) */
-    function getActiveCard(){
-      const scroller = document.getElementById('pnlScroller');
-      const cards = Array.from(scroller.querySelectorAll('.pnl-card'));
-      if(!cards.length) return null;
-      const gap = 14;
-      const cardW = cards[0].getBoundingClientRect().width;
-      const idx = Math.round(scroller.scrollLeft / (cardW + gap));
-      return cards[Math.max(0, Math.min(cards.length-1, idx))];
-    }
     function setupSaveOnlyCard() {
       const saveBtn = Array.from(document.querySelectorAll('#pnlActions .action')).find(a => a.getAttribute('title') === 'Save');
       if(!saveBtn) return;
       saveBtn.addEventListener('click', async () => {
-        const activeCard = getActiveCard() || document.getElementById('pnlCard');
+        const card = document.getElementById('pnlCard');
+        if(!card){ return; }
         try{
-          const canvas = await html2canvas(activeCard, {useCORS:true, scale:2, backgroundColor:null});
+          const canvas = await html2canvas(card, {useCORS:true, scale:2, backgroundColor:null});
           const dataURL = canvas.toDataURL('image/png');
           const a = document.createElement('a');
           a.href = dataURL;
@@ -1210,6 +1190,56 @@
       });
     }
 
+    /* ===== In-card swipe (3 slides) ===== */
+    const track = document.getElementById('pnlTrack');
+    const carousel = document.getElementById('pnlCarousel');
+    let slideIndex = 0;
+    let startX = 0, currentX = 0, isDown = false;
+
+    function setSlide(i, instant=false){
+      slideIndex = Math.max(0, Math.min(2, i));
+      const w = carousel.getBoundingClientRect().width;
+      track.style.transition = instant ? 'none' : 'transform .25s ease';
+      track.style.transform = `translateX(${-slideIndex * w}px)`;
+      if(instant){ requestAnimationFrame(()=> track.style.transition = 'transform .25s ease'); }
+    }
+
+    function onDown(e){
+      isDown = true;
+      carousel.classList.add('grabbing');
+      startX = ('touches' in e) ? e.touches[0].clientX : e.clientX;
+    }
+    function onMove(e){
+      if(!isDown) return;
+      currentX = ('touches' in e) ? e.touches[0].clientX : e.clientX;
+      const dx = currentX - startX;
+      const w = carousel.getBoundingClientRect().width;
+      const base = -slideIndex * w;
+      track.style.transition = 'none';
+      track.style.transform = `translateX(${base + dx}px)`;
+    }
+    function onUp(){
+      if(!isDown) return;
+      isDown = false;
+      carousel.classList.remove('grabbing');
+      const w = carousel.getBoundingClientRect().width;
+      const m = track.style.transform.match(/-?\d+(\.\d+)?px/);
+      const tx = m ? parseFloat(m[0]) : 0;
+      const moved = tx + slideIndex * w;
+      if (Math.abs(moved) > w * 0.2){
+        setSlide(slideIndex + (moved < 0 ? 1 : -1));
+      } else {
+        setSlide(slideIndex);
+      }
+    }
+
+    carousel.addEventListener('mousedown', onDown);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    carousel.addEventListener('touchstart', onDown, {passive:true});
+    carousel.addEventListener('touchmove', onMove, {passive:true});
+    carousel.addEventListener('touchend', onUp);
+
     (async function init(){
       sizeFeed();
       setBottomInset();
@@ -1217,18 +1247,16 @@
 
       await seedWithFuturesMark6M();
 
-      // compute unrealized from persisted (or freshly seeded) trades
       let initialUnreal = 0;
       for (const t of trades) {
         initialUnreal += (t.side === 'LONG') ? upnlLong(t.mark, t.entry, t.qty) : upnlShort(t.mark, t.entry, t.qty);
       }
       unrealizedSum = initialUnreal;
 
-      /*** >>> ENSURE EXACT MARGIN BALANCE (walletBalance derived) <<< ***/
-      const marginBalanceTarget = TARGET_MARGIN_BALANCE; // fixed
-      walletBalance = marginBalanceTarget - unrealizedSum; // MB = wallet + uPnL  → wallet = target - uPnL
+      const marginBalanceTarget = TARGET_MARGIN_BALANCE;
+      walletBalance = marginBalanceTarget - unrealizedSum;
 
-      // Realized PNL display (synthetic for the day; formulas remain Binance-style)
+      const randInt = (min, max) => Math.floor(Math.random()*(max-min+1))+min;
       realizedTodayUSD = randInt(2500, 8500);
       realizedTodayPct = walletBalance > 0 ? (realizedTodayUSD / walletBalance) * 100 : 0;
 
@@ -1236,6 +1264,7 @@
 
       connectFuturesMarkWS();
       setupSaveOnlyCard();
+      setSlide(0, true);
     })();
 
     document.getElementById("amount").textContent = "Loading…";
@@ -1244,57 +1273,57 @@
     document.getElementById("realizedSpan").textContent = "Loading…";
   </script>
 
-  <!-- ========= ONE-GLYPH PATCH (force digit `1` inside pnl-cards to Binance PLEX) ========= -->
+  <!-- ========= ONE-GLYPH PATCH (force digit `1` inside pnl-card to Binance PLEX) ========= -->
   <script>
-    function wrapOnesAll(){
-      document.querySelectorAll('.pnl-card').forEach(pnlCard => {
-        if(!pnlCard) return;
-        function wrapOnes(root){
-          const walker = document.createTreeWalker(
-            root,
-            NodeFilter.SHOW_TEXT,
-            {
-              acceptNode: (node) => {
-                if (!node.nodeValue || node.nodeValue.indexOf('1') === -1) return NodeFilter.FILTER_REJECT;
-                const p = node.parentNode;
-                if (!p || p.classList && p.classList.contains('one-glyph')) return NodeFilter.FILTER_REJECT;
-                if (p.closest && p.closest('.no-one-stylize')) return NodeFilter.FILTER_REJECT;
-                return NodeFilter.FILTER_ACCEPT;
-              }
-            }
-          );
-          const nodes = [];
-          while (walker.nextNode()) nodes.push(walker.currentNode);
+    (function(){
+      const pnlCard = document.getElementById('pnlCard');
+      if(!pnlCard) return;
 
-          nodes.forEach(node => {
-            const txt = node.nodeValue;
-            if (!txt || txt.indexOf('1') === -1) return;
-            const frag = document.createDocumentFragment();
-            for (let i=0;i<txt.length;i++){
-              const ch = txt[i];
-              if (ch === '1'){
-                const span = document.createElement('span');
-                span.className = 'one-glyph';
-                span.textContent = '1';
-                frag.appendChild(span);
-              } else {
-                frag.appendChild(document.createTextNode(ch));
-              }
+      function wrapOnes(root){
+        const walker = document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode: (node) => {
+              if (!node.nodeValue || node.nodeValue.indexOf('1') === -1) return NodeFilter.FILTER_REJECT;
+              const p = node.parentNode;
+              if (!p || p.classList && p.classList.contains('one-glyph')) return NodeFilter.FILTER_REJECT;
+              if (p.closest && p.closest('.no-one-stylize')) return NodeFilter.FILTER_REJECT;
+              return NodeFilter.FILTER_ACCEPT;
             }
-            node.parentNode.replaceChild(frag, node);
-          });
-        }
-        wrapOnes(pnlCard);
-        let timer = null;
-        const mo = new MutationObserver(() => {
-          if (timer) cancelAnimationFrame(timer);
-          timer = requestAnimationFrame(()=> wrapOnes(pnlCard));
+          }
+        );
+        const nodes = [];
+        while (walker.nextNode()) nodes.push(walker.currentNode);
+
+        nodes.forEach(node => {
+          const txt = node.nodeValue;
+          if (!txt || txt.indexOf('1') === -1) return;
+          const frag = document.createDocumentFragment();
+          for (let i=0;i<txt.length;i++){
+            const ch = txt[i];
+            if (ch === '1'){
+              const span = document.createElement('span');
+              span.className = 'one-glyph';
+              span.textContent = '1';
+              frag.appendChild(span);
+            } else {
+              frag.appendChild(document.createTextNode(ch));
+            }
+          }
+          node.parentNode.replaceChild(frag, node);
         });
-        mo.observe(pnlCard, {subtree:true, childList:true, characterData:true});
+      }
+
+      wrapOnes(pnlCard);
+
+      let timer = null;
+      const mo = new MutationObserver(() => {
+        if (timer) cancelAnimationFrame(timer);
+        timer = requestAnimationFrame(()=> wrapOnes(pnlCard));
       });
-    }
-    // initial pass
-    document.addEventListener('DOMContentLoaded', ()=>wrapOnesAll());
+      mo.observe(pnlCard, {subtree:true, childList:true, characterData:true});
+    })();
   </script>
 </body>
 </html>
